@@ -57,11 +57,14 @@ const showingNavigationDropdown = ref(false);
                                 >
                                     ថ្នាក់រៀន (Classes)
                                 </NavLink>
-                                <NavLink
-                                    :href="route('rooms.index')"
-                                    :active="route().current('rooms.*')"
-                                >
+                                <NavLink :href="route('rooms.index')" :active="route().current('rooms.*')">
                                     បន្ទប់រៀន (Rooms)
+                                </NavLink>
+                                <NavLink :href="route('teaching-assignments.index')" :active="route().current('teaching-assignments.*')">
+                                    ចាត់ចែងម៉ោងបង្រៀន
+                                </NavLink>
+                                <NavLink :href="route('teacher-availabilities.index')" :active="route().current('teacher-availabilities.*')">
+                                    កំណត់ម៉ោងទំនេរគ្រូ
                                 </NavLink>
                             </div>
                         </div>
@@ -188,11 +191,14 @@ const showingNavigationDropdown = ref(false);
                         >
                             ថ្នាក់រៀន (Classes)
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink
-                            :href="route('rooms.index')"
-                            :active="route().current('rooms.*')"
-                        >
+                        <ResponsiveNavLink :href="route('rooms.index')" :active="route().current('rooms.*')">
                             បន្ទប់រៀន (Rooms)
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('teaching-assignments.index')" :active="route().current('teaching-assignments.*')">
+                            ចាត់ចែងម៉ោងបង្រៀន
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('teacher-availabilities.index')" :active="route().current('teacher-availabilities.*')">
+                            កំណត់ម៉ោងទំនេរគ្រូ
                         </ResponsiveNavLink>
                     </div>
 

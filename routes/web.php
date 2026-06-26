@@ -1,6 +1,15 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\SchoolClassController;
+use App\Http\Controllers\RoomController;
+use App\Http\Controllers\TeachingAssignmentController;
+use App\Http\Controllers\TeacherAvailabilityController;
+use App\Http\Controllers\TimetableSlotController;
+use App\Http\Controllers\TeacherLeaveController;
+use App\Http\Controllers\SubstituteAssignmentController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -27,8 +36,14 @@ Route::middleware('auth')->group(function () {
     Route::resource('subjects', SubjectController::class);
     Route::resource('classes', SchoolClassController::class)->parameters(['classes' => 'class']);
     Route::resource('rooms', RoomController::class);
-    Route::resource('teaching-assignments', TeachingAssignmentController::class)->only(['index', 'store', 'destroy']);
-    Route::resource('teacher-availabilities', TeacherAvailabilityController::class);
+    Route::resource('teaching-assignments', TeachingAssignmentController::class)->except(['show']);
+    Route::resource('teacher-availabilities', TeacherAvailabilityController::class)->only(['index', 'store']);
+    
+    Route::get('/timetables', [TimetableSlotController::class, 'index'])->name('timetables.index');
+    Route::post('/timetables/generate', [TimetableSlotController::class, 'generate'])->name('timetables.generate');
+
+    Route::resource('teacher-leaves', TeacherLeaveController::class)->only(['index', 'store', 'destroy']);
+    Route::resource('substitute-assignments', SubstituteAssignmentController::class)->only(['index', 'store']);
 });
 
 require __DIR__.'/auth.php';

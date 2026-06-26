@@ -66,6 +66,15 @@ const showingNavigationDropdown = ref(false);
                                 <NavLink :href="route('teacher-availabilities.index')" :active="route().current('teacher-availabilities.*')">
                                     កំណត់ម៉ោងទំនេរគ្រូ
                                 </NavLink>
+                                <NavLink :href="route('timetables.index')" :active="route().current('timetables.*')">
+                                    កាលវិភាគ
+                                </NavLink>
+                                <NavLink :href="route('teacher-leaves.index')" :active="route().current('teacher-leaves.*')">
+                                    សុំច្បាប់
+                                </NavLink>
+                                <NavLink :href="route('substitute-assignments.index')" :active="route().current('substitute-assignments.*')">
+                                    គ្រូជំនួស
+                                </NavLink>
                             </div>
                         </div>
 
@@ -199,6 +208,15 @@ const showingNavigationDropdown = ref(false);
                         </ResponsiveNavLink>
                         <ResponsiveNavLink :href="route('teacher-availabilities.index')" :active="route().current('teacher-availabilities.*')">
                             កំណត់ម៉ោងទំនេរគ្រូ
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('timetables.index')" :active="route().current('timetables.*')">
+                            កាលវិភាគ
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('teacher-leaves.index')" :active="route().current('teacher-leaves.*')">
+                            សុំច្បាប់
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('substitute-assignments.index')" :active="route().current('substitute-assignments.*')">
+                            គ្រូជំនួស
                         </ResponsiveNavLink>
                     </div>
 

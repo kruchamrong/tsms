@@ -16,14 +16,14 @@ defineProps({
 </script>
 
 <template>
-    <Head title="Profile" />
+    <Head title="ប្រវត្តិរូប" />
 
     <AuthenticatedLayout>
         <template #header>
             <h2
                 class="text-xl font-semibold leading-tight text-gray-800"
             >
-                Profile
+                ប្រវត្តិរូប
             </h2>
         </template>
 

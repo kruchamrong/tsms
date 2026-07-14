@@ -18,7 +18,7 @@ use Inertia\Inertia;
 
 Route::get('/setup-database-xyz', function () {
     try {
-        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+        \Illuminate\Support\Facades\Artisan::call('migrate:fresh', ['--force' => true]);
         \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
         return 'Database migrated and seeded successfully!';
     } catch (\Exception $e) {

@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('timetable_slots', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('teaching_assignment_id')->constrained()->cascadeOnDelete();
-            $table->foreignUuid('period_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('period_id')->constrained()->cascadeOnDelete();
             $table->integer('day_of_week'); // 1 = Monday, 7 = Sunday
-            $table->foreignUuid('room_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('room_id')->constrained()->cascadeOnDelete();
             $table->string('status')->default('Scheduled'); // Scheduled, Cancelled, Substituted
             $table->timestamps();
             
@@ -33,3 +33,4 @@ return new class extends Migration
         Schema::dropIfExists('timetable_slots');
     }
 };
+

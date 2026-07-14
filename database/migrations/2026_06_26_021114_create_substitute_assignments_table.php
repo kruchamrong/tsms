@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('substitute_assignments', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('timetable_slot_id')->constrained()->cascadeOnDelete();
-            $table->foreignUuid('substitute_teacher_id')->constrained('teachers')->cascadeOnDelete();
+            $table->foreignId('substitute_teacher_id')->constrained('teachers')->cascadeOnDelete();
             $table->date('date');
             $table->string('status')->default('Assigned');
             $table->timestamps();
@@ -29,3 +29,4 @@ return new class extends Migration
         Schema::dropIfExists('substitute_assignments');
     }
 };
+

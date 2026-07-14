@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('teacher_documents', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('teacher_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('teacher_id')->constrained()->cascadeOnDelete();
             $table->string('title');
             $table->string('file_path');
             $table->string('file_type')->nullable();
@@ -30,3 +30,4 @@ return new class extends Migration
         Schema::dropIfExists('teacher_documents');
     }
 };
+

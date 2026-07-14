@@ -15,9 +15,13 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
+            \App\Http\Middleware\CheckSchoolSetup::class,
         ]);
 
-        //
+        $middleware->alias([
+            'is_super_admin' => \App\Http\Middleware\IsSuperAdmin::class,
+            'is_school_admin' => \App\Http\Middleware\IsSchoolAdmin::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

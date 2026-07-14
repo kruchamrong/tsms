@@ -4,9 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Traits\BelongsToSchool;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class TimetableSlot extends Model
+class TimetableSlot extends Model implements Auditable
 {
+    use \OwenIt\Auditing\Auditable;
+    use BelongsToSchool;
     use HasFactory, \Illuminate\Database\Eloquent\Concerns\HasUuids;
 
     protected $fillable = [

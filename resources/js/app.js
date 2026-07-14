@@ -25,3 +25,38 @@ createInertiaApp({
         color: '#4B5563',
     },
 });
+
+// Global converter for Khmer numerals to Arabic numerals
+function convertKhmerNumbers(node) {
+    if (node.nodeType === 3) { // TEXT_NODE
+        if (/[០-៩]/.test(node.nodeValue)) {
+            const khmerNumbers = ['០', '១', '២', '៣', '៤', '៥', '៦', '៧', '៨', '៩'];
+            node.nodeValue = node.nodeValue.replace(/[០-៩]/g, (match) => khmerNumbers.indexOf(match));
+        }
+    } else if (node.nodeType === 1 && node.nodeName !== 'SCRIPT' && node.nodeName !== 'STYLE') {
+        for (let i = 0; i < node.childNodes.length; i++) {
+            convertKhmerNumbers(node.childNodes[i]);
+        }
+    }
+}
+
+// Initial conversion
+document.addEventListener('DOMContentLoaded', () => {
+    convertKhmerNumbers(document.body);
+    
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.type === 'childList') {
+                mutation.addedNodes.forEach(convertKhmerNumbers);
+            } else if (mutation.type === 'characterData') {
+                convertKhmerNumbers(mutation.target);
+            }
+        });
+    });
+
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        characterData: true
+    });
+});

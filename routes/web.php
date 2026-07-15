@@ -32,7 +32,8 @@ Route::get('/setup-database-xyz', function () {
         $admin->school_id = null;
         $admin->save();
 
-        \Illuminate\Support\Facades\Artisan::call('db:seed', ['--class' => 'Database\Seeders\TemplateDataSeeder', '--force' => true]);
+        $seeder = new \Database\Seeders\TemplateDataSeeder();
+        $seeder->run();
 
         return 'Database migrated, Super Admin created, and Template Data seeded successfully! Email: admin@admin.com, Password: password';
     } catch (\Exception $e) {

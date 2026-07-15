@@ -21,7 +21,7 @@ Route::get('/setup-database-xyz', function () {
     try {
         \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
         
-        $admin = \App\Models\User::firstOrCreate(
+        $admin = \App\Models\User::updateOrCreate(
             ['email' => 'admin@admin.com'],
             [
                 'name' => 'Super Admin',

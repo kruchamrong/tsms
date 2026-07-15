@@ -104,4 +104,21 @@ class TemplateCurriculumController extends Controller
 
         return redirect()->back()->with('message', 'ចងមុខវិជ្ជាទៅកម្មវិធីសិក្សាគំរូបានជោគជ័យ។');
     }
+
+    public function reorder(Request $request)
+    {
+        $request->validate([
+            'curricula' => 'required|array',
+            'curricula.*.id' => 'required|exists:curricula,id',
+            'curricula.*.sort_order' => 'required|integer'
+        ]);
+
+        foreach ($request->curricula as $curriculumData) {
+            Curriculum::where('id', $curriculumData['id'])
+                ->whereNull('school_id')
+                ->update(['sort_order' => $curriculumData['sort_order']]);
+        }
+
+        return redirect()->back()->with('message', 'បានរៀបចំលំដាប់ថ្នាក់កម្មវិធីសិក្សាគំរូដោយជោគជ័យ។');
+    }
 }

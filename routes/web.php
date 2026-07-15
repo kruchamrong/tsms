@@ -61,6 +61,7 @@ Route::middleware(['auth', 'is_super_admin'])->prefix('admin')->name('admin.')->
     // Global Templates Management
     Route::resource('template-subject-groups', \App\Http\Controllers\SuperAdmin\TemplateSubjectGroupController::class)->except(['create', 'show', 'edit']);
     Route::resource('template-subjects', \App\Http\Controllers\SuperAdmin\TemplateSubjectController::class)->except(['create', 'show', 'edit']);
+    Route::post('template-curricula/reorder', [\App\Http\Controllers\SuperAdmin\TemplateCurriculumController::class, 'reorder'])->name('template-curricula.reorder');
     Route::resource('template-curricula', \App\Http\Controllers\SuperAdmin\TemplateCurriculumController::class)
         ->parameters(['template-curricula' => 'template_curriculum'])
         ->except(['create', 'show', 'edit']);

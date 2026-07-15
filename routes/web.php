@@ -78,7 +78,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/teachers/truncate', [TeacherController::class, 'truncate'])->name('teachers.truncate');
         Route::resource('teachers', TeacherController::class);
         Route::post('/subjects/import', [SubjectController::class, 'import'])->name('subjects.import');
-        Route::post('/subjects/import-paste', [SubjectController::class, 'importPaste'])->name('subjects.import-paste');
+        Route::post('/subjects/import-templates', [SubjectController::class, 'importTemplates'])->name('subjects.import-templates');
         Route::get('/subjects/template', [SubjectController::class, 'downloadTemplate'])->name('subjects.template');
         Route::patch('/subjects/{subject}/color', [SubjectController::class, 'updateColor'])->name('subjects.updateColor');
         Route::post('/subjects/reorder', [SubjectController::class, 'reorder'])->name('subjects.reorder');

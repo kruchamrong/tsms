@@ -98,93 +98,59 @@ class SubjectController extends Controller {
         return redirect()->back();
     }
 
-    public function importPaste(Request $request)
+    public function importTemplates(Request $request)
     {
-        $request->validate([
-            'data' => 'required|string',
-        ]);
+        if (auth()->user()->role === 'super_admin') {
+            return redirect()->back()->with('error', 'Super Admin មិនអាចនាំចូលមុខវិជ្ជាគំរូបានទេ។');
+        }
 
-        $data = $request->input('data');
-        $rows = explode("\n", $data);
-
+        $globalSubjects = Subject::withoutGlobalScope(\App\Models\Scopes\SchoolScope::class)
+            ->whereNull('school_id')
+            ->get();
+            
+        $schoolId = auth()->user()->school_id;
         $imported = 0;
-        $errors = [];
-        $rowNumber = 0;
-        
-        $schoolIdCheck = function ($query) {
-            if (auth()->check() && auth()->user()->school_id) {
-                return $query->where('school_id', auth()->user()->school_id);
+
+        foreach ($globalSubjects as $gs) {
+            $exists = Subject::where('school_id', $schoolId)
+                ->where('subject_code', $gs->subject_code)
+                ->exists();
+                
+            if (!$exists) {
+                $newSub = $gs->replicate();
+                $newSub->school_id = $schoolId;
+                $newSub->save();
+                $imported++;
             }
+        }
+
+        return redirect()->back()->with('success', "បាននាំចូលមុខវិជ្ជាគំរូចំនួន {$imported} មុខវិជ្ជាដោយជោគជ័យ។");
+    }
+
+    public function downloadTemplate()
+    {
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=subjects_template.csv",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $columns = ['subject_code', 'khmer_name', 'english_name', 'weekly_hours'];
+
+        $callback = function() use($columns) {
+            $file = fopen('php://output', 'w');
+            fputs($file, "\xEF\xBB\xBF");
+            fputcsv($file, $columns);
+            
+            fputcsv($file, ['S15', 'សិល្បៈ', 'Arts', 2]);
+            fputcsv($file, ['S16', 'កីឡា', 'Sports', 2]);
+
+            fclose($file);
         };
 
-        DB::beginTransaction();
-
-        try {
-            foreach ($rows as $index => $rowStr) {
-                $rowNumber++;
-                
-                $rowStr = trim($rowStr);
-                if (empty($rowStr)) continue;
-
-                $row = explode("\t", $rowStr);
-                
-                if (count($row) < 3) {
-                    if ($rowNumber === 1) continue; // Skip header
-                    $errors[] = "ជួរទី $rowNumber: ទិន្នន័យមិនគ្រប់គ្រាន់ (ត្រូវមានយ៉ាងហោចណាស់៣ជួរឈរ)";
-                    continue;
-                }
-
-                $code = trim($row[0]);
-                $khmerName = trim($row[1]);
-                $englishName = trim($row[2]);
-                $shortName = isset($row[3]) ? trim($row[3]) : null;
-
-                if (empty($code)) {
-                    if ($rowNumber === 1) continue;
-                    $errors[] = "ជួរទី $rowNumber: លេខកូដទទេ";
-                    continue;
-                }
-
-                if ($rowNumber === 1 && (str_contains(strtolower($code), 'code') || str_contains(strtolower($code), 'លេខកូដ') || str_contains(strtolower($code), 'អត្តលេខ'))) {
-                    continue;
-                }
-
-                if (Subject::where('subject_code', $code)->where($schoolIdCheck)->exists()) {
-                    $errors[] = "ជួរទី $rowNumber: លេខកូដ '$code' មានរួចហើយ";
-                    continue;
-                }
-
-                try {
-                    Subject::create([
-                        'subject_code' => $code,
-                        'khmer_name' => $khmerName,
-                        'english_name' => $englishName,
-                        'short_name' => $shortName,
-                        'school_id' => auth()->user()->school_id
-                    ]);
-                    $imported++;
-                } catch (\Exception $e) {
-                    $errors[] = "ជួរទី $rowNumber: បរាជ័យក្នុងការបញ្ចូល";
-                    continue;
-                }
-            }
-
-            if (count($errors) > 0) {
-                DB::rollBack();
-                $errorMsg = "បរាជ័យក្នុងការនាំចូល! មានបញ្ហា " . count($errors) . " ជួរ៖\n" . implode("\n", array_slice($errors, 0, 10)) . (count($errors) > 10 ? "\nនិង " . (count($errors) - 10) . " បញ្ហាទៀត..." : "");
-                session()->flash('error', $errorMsg);
-                return redirect()->back();
-            }
-
-            DB::commit();
-            session()->flash('success', "នាំចូលបាន $imported មុខវិជ្ជាដោយជោគជ័យ។");
-            return redirect()->back();
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            session()->flash('error', "មានកំហុសប្រព័ន្ធ (System Error) កំឡុងពេលនាំចូលទិន្នន័យ។");
-            return redirect()->back();
-        }
+        return response()->stream($callback, 200, $headers);
     }
 
     public function import(Request $request)

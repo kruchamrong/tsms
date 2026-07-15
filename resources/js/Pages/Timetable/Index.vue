@@ -655,34 +655,36 @@ const getCellClass = (slot, dayId, periodId, classId) => {
                     <!-- Top Row: Filters + Full screen button -->
                     <div class="flex flex-wrap items-end gap-3 justify-between">
                         <div class="flex flex-wrap items-end gap-3 flex-grow">
-                            <div class="w-full sm:w-[130px]">
-                                <label class="block text-[10px] font-medium text-gray-700 mb-0.5">រើសភូមិសិក្សា</label>
-                                <select v-model="filterForm.level_id" @change="onFilterChange" class="block w-full border-gray-300 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500 text-xs py-1">
+                            <div class="w-full sm:w-[150px]">
+                                <label class="block text-xs font-medium text-gray-700 mb-1">រើសភូមិសិក្សា</label>
+                                <select v-model="filterForm.level_id" @change="onFilterChange" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm">
                                     <option value="">-- ទាំងអស់ --</option>
                                     <option value="lower">មធ្យមសិក្សាបឋមភូមិ</option>
                                     <option value="upper">មធ្យមសិក្សាទុតិយភូមិ</option>
                                 </select>
                             </div>
-                            <div class="w-full sm:w-[130px]">
-                                <label class="block text-[10px] font-medium text-gray-700 mb-0.5">រើសវេនសិក្សា</label>
-                                <select v-model="filterForm.shift_id" @change="onFilterChange" class="block w-full border-gray-300 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500 text-xs py-1">
+                            <div class="w-full sm:w-[150px]">
+                                <label class="block text-xs font-medium text-gray-700 mb-1">រើសវេនសិក្សា</label>
+                                <select v-model="filterForm.shift_id" @change="onFilterChange" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm">
                                     <option v-for="s in shifts" :key="s.id" :value="s.id">{{ s.name }}</option>
                                 </select>
                             </div>
-                            <div class="w-full sm:w-[170px]">
-                                <label class="block text-[10px] font-medium text-gray-700 mb-0.5">រើសមុខវិជ្ជា</label>
-                                <SearchableSelect 
-                                    v-model="subjectFilter" 
-                                    :options="subjects" 
-                                    valueKey="id" 
-                                    labelKey="khmer_name" 
-                                    placeholder="-- ទាំងអស់ --"
-                                    @update:modelValue="filterForm.teacher_id=''; onFilterChange()"
-                                />
+                            <div class="w-full sm:w-[180px]">
+                                <label class="block text-xs font-medium text-gray-700 mb-1">រើសមុខវិជ្ជា</label>
+                                <div class="relative z-50">
+                                    <SearchableSelect 
+                                        v-model="subjectFilter" 
+                                        :options="subjects" 
+                                        valueKey="id" 
+                                        labelKey="khmer_name" 
+                                        placeholder="-- ទាំងអស់ --"
+                                        @update:modelValue="filterForm.teacher_id=''; onFilterChange()"
+                                    />
+                                </div>
                             </div>
-                            <div class="w-full sm:w-[220px]">
-                                <label class="block text-[10px] font-medium text-gray-700 mb-0.5">ជ្រើសរើសគ្រូបង្រៀន (ចុចលើតារាង)</label>
-                                <div class="flex gap-2">
+                            <div class="w-full sm:w-[250px]">
+                                <label class="block text-xs font-medium text-gray-700 mb-1">ជ្រើសរើសគ្រូបង្រៀន (ចុចលើតារាង)</label>
+                                <div class="flex gap-2 relative z-40">
                                     <SearchableSelect
                                         class="flex-grow"
                                         v-model="filterForm.teacher_id"
@@ -690,8 +692,8 @@ const getCellClass = (slot, dayId, periodId, classId) => {
                                         placeholder="-- សូមជ្រើសរើសគ្រូ --"
                                         @update:modelValue="onFilterChange"
                                     />
-                                    <button @click="isTeacherModalOpen = true" type="button" class="shrink-0 inline-flex items-center justify-center w-8 h-8 rounded border border-gray-300 text-gray-500 bg-white hover:bg-gray-50 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition shadow-sm" title="បញ្ជីគ្រូបង្រៀន">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                                    <button @click="isTeacherModalOpen = true" type="button" class="shrink-0 inline-flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 text-gray-500 bg-white hover:bg-gray-50 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition shadow-sm" title="បញ្ជីគ្រូបង្រៀន">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                                     </button>
                                 </div>
                             </div>
@@ -748,9 +750,9 @@ const getCellClass = (slot, dayId, periodId, classId) => {
                 <!-- Master Grid -->
                 <div class="flex-grow bg-white shadow-sm sm:rounded-lg overflow-auto print:overflow-visible print:shadow-none print:border-none border border-gray-200 min-h-0">
                     <table class="min-w-full divide-y divide-gray-200 border-collapse table-fixed w-full text-xs print:w-full">
-                        <thead class="bg-gray-100 sticky print:static top-0 z-10 shadow-sm">
+                        <thead class="bg-gray-50 sticky print:static top-0 z-10 shadow-sm border-b border-gray-200">
                             <tr>
-                                <th class="px-2 py-2 print:py-0.5 text-center font-semibold text-gray-700 border w-12 sticky print:static left-0 z-20 bg-gray-100 shadow-[1px_0_0_0_#e5e7eb] print:shadow-none">
+                                <th class="px-2 py-2 print:py-0.5 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider border w-12 sticky print:static left-0 z-20 bg-gray-50 shadow-[1px_0_0_0_#e5e7eb] print:shadow-none">
                                     <div class="flex flex-col items-center justify-center">
                                         <span>ថ្ងៃ</span>
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mt-1 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -758,7 +760,7 @@ const getCellClass = (slot, dayId, periodId, classId) => {
                                         </svg>
                                     </div>
                                 </th>
-                                <th class="px-2 py-2 print:py-0.5 text-center font-semibold text-gray-700 border w-20 sticky print:static left-12 z-20 bg-gray-100 shadow-[1px_0_0_0_#e5e7eb] print:shadow-none">
+                                <th class="px-2 py-2 print:py-0.5 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider border w-20 sticky print:static left-12 z-20 bg-gray-50 shadow-[1px_0_0_0_#e5e7eb] print:shadow-none">
                                     <div class="flex flex-col items-center justify-center">
                                         <span>ម៉ោង</span>
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mt-1 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -766,15 +768,15 @@ const getCellClass = (slot, dayId, periodId, classId) => {
                                         </svg>
                                     </div>
                                 </th>
-                                <th v-for="c in classes" :key="c.id" @click="openClassModal(c)" class="px-2 py-2 print:py-0.5 text-center border min-w-[80px] align-top cursor-pointer hover:bg-gray-50 transition-colors">
-                                    <div class="font-bold text-gray-800 print:text-[11px]">{{ c.class_code || c.name }}</div>
+                                <th v-for="c in classes" :key="c.id" @click="openClassModal(c)" class="px-2 py-2 print:py-0.5 text-center border min-w-[80px] align-top cursor-pointer hover:bg-gray-100 transition-colors bg-gray-50">
+                                    <div class="text-xs font-bold text-gray-800 print:text-[11px]">{{ c.class_code || c.name }}</div>
                                     <div v-if="props.classStats && props.classStats[c.id] && props.classStats[c.id].required > 0" 
                                          :class="['text-[10px] px-1.5 py-0.5 rounded inline-block font-medium mt-1 shadow-sm print:shadow-none', (props.classStats[c.id].assigned >= props.classStats[c.id].required ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-orange-100 text-orange-800 border border-orange-200')]"
                                          title="ម៉ោងដែលបានបញ្ចូល / ម៉ោងសរុប">
                                         {{ props.classStats[c.id].assigned }}/{{ props.classStats[c.id].required }}
                                     </div>
                                 </th>
-                                <th class="px-2 py-2 print:py-0.5 text-center font-semibold text-gray-700 border w-20 sticky print:static right-12 z-20 bg-gray-100 shadow-[-1px_0_0_0_#e5e7eb] print:shadow-none">
+                                <th class="px-2 py-2 print:py-0.5 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider border w-20 sticky print:static right-12 z-20 bg-gray-50 shadow-[-1px_0_0_0_#e5e7eb] print:shadow-none">
                                     <div class="flex flex-col items-center justify-center">
                                         <span>ម៉ោង</span>
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mt-1 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -782,7 +784,7 @@ const getCellClass = (slot, dayId, periodId, classId) => {
                                         </svg>
                                     </div>
                                 </th>
-                                <th class="px-2 py-2 print:py-0.5 text-center font-semibold text-gray-700 border w-12 sticky print:static right-0 z-20 bg-gray-100 shadow-[-1px_0_0_0_#e5e7eb] print:shadow-none">
+                                <th class="px-2 py-2 print:py-0.5 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider border w-12 sticky print:static right-0 z-20 bg-gray-50 shadow-[-1px_0_0_0_#e5e7eb] print:shadow-none">
                                     <div class="flex flex-col items-center justify-center">
                                         <span>ថ្ងៃ</span>
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mt-1 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">

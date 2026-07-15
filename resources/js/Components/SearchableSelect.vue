@@ -2,10 +2,11 @@
   <div class="relative w-full" ref="container">
     <div 
       @click="!disabled && toggle()"
-      class="w-full bg-white border px-3 py-2 text-left cursor-default sm:text-sm flex justify-between items-center transition-colors"
+      class="w-full px-3 py-2 text-left cursor-default sm:text-sm flex justify-between items-center transition-colors"
       :class="{ 
-        'ring-1 ring-blue-500 border-blue-500': isOpen && !disabled, 
-        'border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm rounded-md': !disabled,
+        'bg-white border ring-1 ring-blue-500 border-blue-500': isOpen && !disabled, 
+        'bg-white border border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm rounded-md': !disabled && !transparent && !isOpen,
+        'bg-transparent hover:bg-black/5 focus:ring-1 focus:ring-blue-500 rounded': !disabled && transparent && !isOpen,
         'bg-gray-100 text-gray-500 border-gray-200 cursor-not-allowed rounded': disabled 
       }"
     >
@@ -18,7 +19,7 @@
       </span>
     </div>
 
-    <div v-if="isOpen" class="absolute z-50 mt-1 w-full bg-white shadow-xl max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+    <div v-if="isOpen" class="absolute z-50 mt-1 w-full min-w-[250px] bg-white shadow-xl max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
       <div class="px-2 pb-2 sticky top-0 bg-white pt-1 z-10">
         <input 
           type="text" 
@@ -88,6 +89,10 @@ const props = defineProps({
   placeholder: {
     type: String,
     default: '-- ជ្រើសរើស --'
+  },
+  transparent: {
+    type: Boolean,
+    default: false
   }
 });
 

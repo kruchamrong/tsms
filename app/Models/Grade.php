@@ -8,5 +8,5 @@ use App\Models\Traits\BelongsToSchool;
 class Grade extends Model
 {
     use BelongsToSchool;
-    //
+    protected $guarded = [];
 }

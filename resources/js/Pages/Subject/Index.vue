@@ -1,5 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import Modal from '@/Components/Modal.vue';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
 import debounce from 'lodash/debounce';
@@ -73,6 +74,40 @@ const handleFileUpload = (event) => {
     });
 };
 
+const showPasteModal = ref(false);
+const pastedData = ref('');
+const isSubmittingPaste = ref(false);
+
+const openPasteModal = () => {
+    pastedData.value = '';
+    showPasteModal.value = true;
+};
+
+const closePasteModal = () => {
+    showPasteModal.value = false;
+    pastedData.value = '';
+};
+
+const submitPastedData = () => {
+    if (!pastedData.value.trim()) {
+        alert('សូមបញ្ចូលទិន្នន័យជាមុនសិន!');
+        return;
+    }
+    
+    isSubmittingPaste.value = true;
+    router.post(route('subjects.import-paste'), { data: pastedData.value }, {
+        preserveScroll: true,
+        onSuccess: () => {
+            closePasteModal();
+            isSubmittingPaste.value = false;
+        },
+        onError: (errors) => {
+            alert('មានបញ្ហាក្នុងការនាំចូល។ សូមពិនិត្យទិន្នន័យអ្នកម្ដងទៀត។');
+            isSubmittingPaste.value = false;
+        }
+    });
+};
+
 const localSubjects = ref([...props.subjects]);
 
 watch(() => props.subjects, (newVal) => {
@@ -111,11 +146,6 @@ const onDrop = (index) => {
     draggedIndex = null;
 };
 
-const importTemplates = () => {
-    if (confirm('តើអ្នកពិតជាចង់នាំចូលមុខវិជ្ជាគំរូទាំងអស់មែនទេ?')) {
-        router.post(route('subjects.import-templates'));
-    }
-};
 </script>
 
 <template>
@@ -137,12 +167,12 @@ const importTemplates = () => {
 
 
 
-                                <PrimaryButton @click="importTemplates" type="button" class="bg-purple-600 hover:bg-purple-700 focus:bg-purple-700 active:bg-purple-900 border-transparent shadow-sm flex items-center px-4 py-2 text-sm">
+                                <button @click="openPasteModal" type="button" class="bg-purple-600 hover:bg-purple-700 focus:bg-purple-700 active:bg-purple-900 text-white rounded shadow-sm flex items-center px-4 py-2 text-sm transition" title="Copy ពី Excel មក Paste បញ្ចូលទីនេះផ្ទាល់">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
                                     </svg>
-                                    នាំចូលមុខវិជ្ជាគំរូ
-                                </PrimaryButton>
+                                    Paste ពី Excel
+                                </button>
 
                                 <Link :href="route('subjects.create')" class="px-4 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 transition shadow-sm">
                                     បន្ថែមថ្មី
@@ -208,6 +238,34 @@ const importTemplates = () => {
                                 </tbody>
                             </table>
                         </div>
+
+                        <!-- Paste Modal -->
+                        <Modal :show="showPasteModal" @close="closePasteModal" maxWidth="3xl">
+                            <div class="p-6">
+                                <h2 class="text-lg font-medium text-gray-900 mb-4">ទាញទិន្នន័យចូលដោយផ្ទាល់ពី Excel (Copy-Paste)</h2>
+                                <p class="text-sm text-gray-600 mb-4">
+                                    សូមធ្វើការ <b>Copy</b> ទិន្នន័យពី Excel រួច <b>Paste</b> ចូលក្នុងប្រអប់ខាងក្រោមនេះ៖ <br/>
+                                    <span class="text-xs text-gray-500">(តម្រូវឲ្យមានជួរឈរតាមលំដាប់៖ លេខកូដ, ឈ្មោះខ្មែរ, ឈ្មោះអង់គ្លេស, អក្សរកាត់)</span>
+                                </p>
+                                
+                                <textarea 
+                                    v-model="pastedData" 
+                                    rows="10" 
+                                    class="w-full border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-md shadow-sm text-sm font-mono whitespace-pre"
+                                    placeholder="Paste ទិន្នន័យនៅទីនេះ... (Ctrl+V)"></textarea>
+
+                                <div class="mt-6 flex justify-end gap-3">
+                                    <button @click="closePasteModal" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md text-sm font-medium hover:bg-gray-200 transition">
+                                        បោះបង់
+                                    </button>
+                                    <button @click="submitPastedData" :disabled="isSubmittingPaste" class="px-4 py-2 bg-purple-600 text-white rounded-md text-sm font-medium hover:bg-purple-700 transition disabled:opacity-50">
+                                        <span v-if="isSubmittingPaste">កំពុងរក្សាទុក...</span>
+                                        <span v-else>ទាញទិន្នន័យចូល</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </Modal>
+                        
                     </div>
                 </div>
             </div>

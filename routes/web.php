@@ -161,6 +161,10 @@ Route::get('/generate-classes-santhormok', function () {
         return 'រកមិនឃើញវេនសិក្សា "ព្រឹក" នៅក្នុងប្រព័ន្ធទេ។';
     }
 
+    // Ensure grades exist
+    $seeder = new \Database\Seeders\GradeSeeder();
+    $seeder->run();
+
     $grades = \App\Models\Grade::pluck('id', 'name')->toArray();
 
     $classes = [

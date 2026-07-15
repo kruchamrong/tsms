@@ -199,3 +199,35 @@ Route::get('/generate-classes-santhormok', function () {
 
     return 'Classes generated successfully! You can now go back to your class management page.';
 });
+
+Route::get('/generate-rooms-santhormok', function () {
+    if (!auth()->check() || !auth()->user()->school_id) {
+        return 'Please login as a school admin first.';
+    }
+
+    $schoolId = auth()->user()->school_id;
+
+    $buildings = [
+        'A' => 10,
+        'B' => 10,
+        'C' => 10,
+        'D' => 5,
+    ];
+
+    foreach ($buildings as $building => $count) {
+        for ($i = 1; $i <= $count; $i++) {
+            $roomName = $building . str_pad($i, 2, '0', STR_PAD_LEFT); // e.g. A01, A02
+            
+            \App\Models\Room::firstOrCreate([
+                'school_id' => $schoolId,
+                'room_name' => $roomName,
+            ], [
+                'building' => $building,
+                'capacity' => 35,
+                'room_type' => 'ថ្នាក់រៀន',
+            ]);
+        }
+    }
+
+    return 'Rooms generated successfully! 35 rooms created. You can now go back to your room management page.';
+});

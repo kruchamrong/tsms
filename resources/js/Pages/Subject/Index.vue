@@ -116,6 +116,14 @@ const importTemplates = () => {
         router.post(route('subjects.import-templates'));
     }
 };
+
+const deleteSubject = (id) => {
+    if (confirm('តើអ្នកពិតជាចង់លុបមុខវិជ្ជានេះមែនទេ?')) {
+        router.delete(route('subjects.destroy', id), {
+            preserveScroll: true
+        });
+    }
+};
 </script>
 
 <template>
@@ -151,53 +159,55 @@ const importTemplates = () => {
                         </div>
 
                         <div class="overflow-x-auto">
-                            <table class="min-w-[800px] w-full divide-y divide-gray-200 table-fixed">
-                                <thead class="bg-gray-50">
+                            <table class="min-w-[800px] w-full divide-y divide-gray-100 table-fixed">
+                                <thead class="bg-gray-50 border-b border-gray-200">
                                     <tr>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-40">លេខកូដ</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ឈ្មោះខ្មែរ</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase w-64">ឈ្មោះអង់គ្លេស</th>
-                                        <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase w-32">អក្សរកាត់</th>
-                                        <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase w-24">ពណ៌</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase w-24">សកម្មភាព</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-36">លេខកូដ</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">ឈ្មោះខ្មែរ</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider min-w-[200px]">ឈ្មោះអង់គ្លេស</th>
+                                        <th scope="col" class="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider w-32">អក្សរកាត់</th>
+                                        <th scope="col" class="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider w-24">ពណ៌</th>
+                                        <th scope="col" class="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider w-24">សកម្មភាព</th>
                                     </tr>
                                 </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
+                                <tbody class="bg-white divide-y divide-gray-100">
                                     <tr v-for="(subject, index) in localSubjects" :key="subject.id" 
-                                        class="even:bg-gray-50 hover:bg-gray-100 transition-colors cursor-move"
+                                        class="hover:bg-gray-50 transition-colors cursor-move group"
                                         draggable="true"
                                         @dragstart="onDragStart(index, $event)"
                                         @dragover.prevent
                                         @dragenter.prevent
                                         @drop="onDrop(index)">
-                                        <td class="px-6 py-4 whitespace-nowrap flex items-center gap-2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 text-gray-400 cursor-move shrink-0">
+                                        <td class="px-6 py-3 whitespace-nowrap flex items-center gap-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 text-gray-400 cursor-move shrink-0 hover:text-gray-600">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9h16.5m-16.5 6.75h16.5" />
                                             </svg>
-                                            <input type="text" v-model="subject.subject_code" @change="updateSubject(subject)" spellcheck="false" class="w-full border-0 rounded p-1 text-sm transition-colors bg-transparent hover:bg-black/5 focus:ring-1 focus:ring-blue-500">
+                                            <input type="text" v-model="subject.subject_code" @change="updateSubject(subject)" spellcheck="false" class="w-full bg-transparent border border-transparent hover:bg-white hover:border-gray-300 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded px-2 py-1.5 text-sm font-medium text-gray-900 transition-all placeholder-gray-400">
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <input type="text" v-model="subject.khmer_name" @change="updateSubject(subject)" spellcheck="false" class="w-full border-0 rounded p-1 font-medium text-sm transition-colors bg-transparent hover:bg-black/5 focus:ring-1 focus:ring-blue-500 text-gray-900">
+                                        <td class="px-6 py-3 whitespace-nowrap">
+                                            <input type="text" v-model="subject.khmer_name" @change="updateSubject(subject)" spellcheck="false" class="w-full bg-transparent border border-transparent hover:bg-white hover:border-gray-300 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded px-2 py-1.5 text-sm font-medium text-gray-900 transition-all placeholder-gray-400">
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <input type="text" v-model="subject.english_name" @change="updateSubject(subject)" spellcheck="false" class="w-full border-0 rounded p-1 text-sm transition-colors bg-transparent hover:bg-black/5 focus:ring-1 focus:ring-blue-500 text-gray-500">
+                                        <td class="px-6 py-3 whitespace-nowrap">
+                                            <input type="text" v-model="subject.english_name" @change="updateSubject(subject)" spellcheck="false" class="w-full bg-transparent border border-transparent hover:bg-white hover:border-gray-300 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded px-2 py-1.5 text-sm text-gray-600 transition-all placeholder-gray-400">
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-center">
+                                        <td class="px-6 py-3 whitespace-nowrap text-center">
                                             <input type="text" v-model="subject.short_name" @change="updateSubject(subject)" spellcheck="false" placeholder="-" 
                                                 class="w-16 text-center border rounded px-2 py-1 text-xs font-bold transition-colors uppercase cursor-text hover:brightness-95 focus:ring-2 focus:ring-offset-1"
                                                 :style="`color: ${subject.color || '#6b7280'}; border-color: ${subject.color || '#d1d5db'}; background-color: ${(subject.color || '#f3f4f6')}1A;`">
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center justify-center border border-gray-200 p-0.5 rounded shadow-sm w-9 h-9 bg-white transition-colors mx-auto hover:border-gray-400">
+                                        <td class="px-6 py-3 whitespace-nowrap">
+                                            <div class="flex items-center justify-center border border-gray-200 p-0.5 rounded shadow-sm w-8 h-8 bg-white transition-colors mx-auto hover:border-gray-400">
                                                 <input type="color" v-model="subject.color" @change="updateColor(subject)" class="w-full h-full border-0 p-0 bg-transparent block rounded-sm cursor-pointer">
                                             </div>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <Link :href="route('subjects.destroy', subject.id)" method="delete" as="button" class="text-red-500 hover:text-red-700 p-2 rounded hover:bg-red-50 transition-colors" title="លុប">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                                  <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                                                </svg>
-                                            </Link>
+                                        <td class="px-6 py-3 whitespace-nowrap text-sm font-medium text-center">
+                                            <div class="flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <button @click="deleteSubject(subject.id)" class="text-red-600 hover:text-red-800 p-1.5 rounded-full hover:bg-red-50 transition-colors" title="លុប">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                                    </svg>
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                     <tr v-if="localSubjects.length === 0">

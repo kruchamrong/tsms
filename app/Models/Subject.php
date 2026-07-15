@@ -21,13 +21,13 @@ class Subject extends Model
     protected static function booted()
     {
         static::updating(function ($subject) {
-            if ($subject->school_id === null && auth()->check() && auth()->user()->role !== 'super_admin') {
+            if ($subject->getOriginal('school_id') === null && auth()->check() && auth()->user()->role !== 'super_admin') {
                 abort(403, 'មិនអាចកែប្រែមុខវិជ្ជាគំរូបានទេ!');
             }
         });
 
         static::deleting(function ($subject) {
-            if ($subject->school_id === null && auth()->check() && auth()->user()->role !== 'super_admin') {
+            if ($subject->getOriginal('school_id') === null && auth()->check() && auth()->user()->role !== 'super_admin') {
                 abort(403, 'មិនអាចលុបមុខវិជ្ជាគំរូបានទេ!');
             }
         });

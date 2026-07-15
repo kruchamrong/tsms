@@ -1095,14 +1095,39 @@ class TemplateDataSeeder extends Seeder
             );
         }
 
-        foreach ($periods as $period) {
-            Period::firstOrCreate(
-                ['name' => $period['name'], 'school_id' => null],
-                [
-                    'start_time' => $period['start_time'],
-                    'end_time' => $period['end_time']
-                ]
-            );
+        $shiftMorning = \App\Models\Shift::firstOrCreate(['name' => 'ព្រឹក', 'school_id' => null]);
+        $shiftAfternoon = \App\Models\Shift::firstOrCreate(['name' => 'រសៀល', 'school_id' => null]);
+
+        $morningPeriods = [
+            ['start' => '07:00:00', 'end' => '08:00:00'],
+            ['start' => '08:00:00', 'end' => '09:00:00'],
+            ['start' => '09:00:00', 'end' => '10:00:00'],
+            ['start' => '10:00:00', 'end' => '11:00:00'],
+        ];
+
+        $afternoonPeriods = [
+            ['start' => '13:00:00', 'end' => '14:00:00'],
+            ['start' => '14:00:00', 'end' => '15:00:00'],
+            ['start' => '15:00:00', 'end' => '16:00:00'],
+            ['start' => '16:00:00', 'end' => '17:00:00'],
+        ];
+
+        foreach ($morningPeriods as $p) {
+            Period::firstOrCreate([
+                'start_time' => $p['start'],
+                'end_time' => $p['end'],
+                'shift_id' => $shiftMorning->id,
+                'school_id' => null
+            ]);
+        }
+
+        foreach ($afternoonPeriods as $p) {
+            Period::firstOrCreate([
+                'start_time' => $p['start'],
+                'end_time' => $p['end'],
+                'shift_id' => $shiftAfternoon->id,
+                'school_id' => null
+            ]);
         }
 
         foreach ($curricula as $curriculum) {

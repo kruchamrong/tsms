@@ -148,3 +148,40 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+Route::get('/generate-classes-santhormok', function () {
+    if (!auth()->check() || !auth()->user()->school_id) {
+        return 'Please login as a school admin first.';
+    }
+
+    $schoolId = auth()->user()->school_id;
+    $shiftId = 1; // ព្រឹក
+
+    $classes = [
+        ['name' => '12A1', 'grade_id' => 6],
+        ['name' => '12B1', 'grade_id' => 6],
+        ['name' => '11A1', 'grade_id' => 5],
+        ['name' => '11B1', 'grade_id' => 5],
+        ['name' => '10A1', 'grade_id' => 4],
+        ['name' => '10B1', 'grade_id' => 4],
+        ['name' => '9A1', 'grade_id' => 3],
+        ['name' => '9B1', 'grade_id' => 3],
+        ['name' => '8A1', 'grade_id' => 2],
+        ['name' => '8B1', 'grade_id' => 2],
+        ['name' => '7A1', 'grade_id' => 1],
+        ['name' => '7B1', 'grade_id' => 1],
+    ];
+
+    foreach ($classes as $class) {
+        \App\Models\SchoolClass::firstOrCreate([
+            'school_id' => $schoolId,
+            'name' => $class['name'],
+        ], [
+            'grade_id' => $class['grade_id'],
+            'shift_id' => $shiftId,
+            'student_count' => 35,
+        ]);
+    }
+
+    return 'Classes generated successfully! You can now go back to your class management page.';
+});

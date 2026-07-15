@@ -119,6 +119,13 @@ class TeacherController extends Controller
         return redirect()->back()->with('success', 'គ្រូបង្រៀនត្រូវបានលុបដោយជោគជ័យ។');
     }
 
+    public function truncate()
+    {
+        Teacher::query()->delete();
+        
+        return redirect()->back()->with('success', 'ទិន្នន័យគ្រូបង្រៀនទាំងអស់ត្រូវបានលុបដោយជោគជ័យ។');
+    }
+
     public function downloadTemplate()
     {
         $headers = [

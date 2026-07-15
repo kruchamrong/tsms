@@ -221,43 +221,48 @@ class CurriculumController extends Controller
         $schoolId = auth()->user()->school_id;
         $imported = 0;
 
-        DB::transaction(function () use ($globalCurricula, $schoolId, &$imported) {
-            foreach ($globalCurricula as $gc) {
-                $exists = Curriculum::where('school_id', $schoolId)
-                    ->where('name', $gc->name)
-                    ->exists();
-                    
-                if (!$exists) {
-                    $newCurr = $gc->replicate();
-                    $newCurr->school_id = $schoolId;
-                    $newCurr->save();
-                    
-                    // Sync subjects. We need to map global subject IDs to local subject IDs using subject_code
-                    $syncData = [];
-                    foreach ($gc->subjects as $globalSubject) {
-                        // Find local subject with same subject_code
-                        $localSubject = Subject::where('school_id', $schoolId)
-                            ->where('subject_code', $globalSubject->subject_code)
-                            ->first();
-                            
-                        // Auto-import the subject if it doesn't exist
-                        if (!$localSubject) {
-                            $localSubject = $globalSubject->replicate();
-                            $localSubject->school_id = $schoolId;
-                            $localSubject->save();
+        try {
+            DB::transaction(function () use ($globalCurricula, $schoolId, &$imported) {
+                foreach ($globalCurricula as $gc) {
+                    $exists = Curriculum::where('school_id', $schoolId)
+                        ->where('name', $gc->name)
+                        ->exists();
+                        
+                    if (!$exists) {
+                        $newCurr = $gc->replicate();
+                        $newCurr->school_id = $schoolId;
+                        $newCurr->save();
+                        
+                        // Sync subjects. We need to map global subject IDs to local subject IDs using subject_code
+                        $syncData = [];
+                        foreach ($gc->subjects as $globalSubject) {
+                            // Find local subject with same subject_code
+                            $localSubject = Subject::where('school_id', $schoolId)
+                                ->where('subject_code', $globalSubject->subject_code)
+                                ->first();
+                                
+                            // Auto-import the subject if it doesn't exist
+                            if (!$localSubject) {
+                                $localSubject = $globalSubject->replicate();
+                                $localSubject->school_id = $schoolId;
+                                $localSubject->save();
+                            }
+                                
+                            $syncData[$localSubject->id] = [
+                                'weekly_hours' => $globalSubject->pivot->weekly_hours,
+                                'sort_order' => $globalSubject->pivot->sort_order,
+                            ];
                         }
-                            
-                        $syncData[$localSubject->id] = [
-                            'weekly_hours' => $globalSubject->pivot->weekly_hours,
-                            'sort_order' => $globalSubject->pivot->sort_order,
-                        ];
+                        $newCurr->subjects()->sync($syncData);
+                        $imported++;
                     }
-                    $newCurr->subjects()->sync($syncData);
-                    $imported++;
                 }
-            }
-        });
+            });
 
-        return redirect()->back()->with('success', "បាននាំចូលកម្មវិធីសិក្សាគំរូចំនួន {$imported} ដោយជោគជ័យ។");
+            return redirect()->back()->with('success', "បាននាំចូលកម្មវិធីសិក្សាគំរូចំនួន {$imported} ដោយជោគជ័យ។");
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Import Template Curricula Error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'បរាជ័យក្នុងការនាំចូលកម្មវិធីសិក្សាគំរូ។ សូមពិនិត្យមើលសារកំហុស: ' . $e->getMessage());
+        }
     }
 }

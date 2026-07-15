@@ -20,8 +20,19 @@ use Inertia\Inertia;
 Route::get('/setup-database-xyz', function () {
     try {
         \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
-        \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
-        return 'Database migrated and seeded successfully!';
+        
+        $admin = \App\Models\User::firstOrCreate(
+            ['email' => 'admin@admin.com'],
+            [
+                'name' => 'Super Admin',
+                'password' => bcrypt('password'),
+            ]
+        );
+        $admin->role = 'super_admin';
+        $admin->school_id = null;
+        $admin->save();
+
+        return 'Database migrated and Super Admin created successfully! Email: admin@admin.com, Password: password';
     } catch (\Exception $e) {
         return 'Error: ' . $e->getMessage();
     }

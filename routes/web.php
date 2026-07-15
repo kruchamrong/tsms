@@ -155,29 +155,39 @@ Route::get('/generate-classes-santhormok', function () {
     }
 
     $schoolId = auth()->user()->school_id;
-    $shiftId = 1; // ព្រឹក
+    $shiftId = \App\Models\Shift::where('name', 'ព្រឹក')->value('id');
+
+    if (!$shiftId) {
+        return 'រកមិនឃើញវេនសិក្សា "ព្រឹក" នៅក្នុងប្រព័ន្ធទេ។';
+    }
+
+    $grades = \App\Models\Grade::pluck('id', 'name')->toArray();
 
     $classes = [
-        ['name' => '12A1', 'grade_id' => 6],
-        ['name' => '12B1', 'grade_id' => 6],
-        ['name' => '11A1', 'grade_id' => 5],
-        ['name' => '11B1', 'grade_id' => 5],
-        ['name' => '10A1', 'grade_id' => 4],
-        ['name' => '10B1', 'grade_id' => 4],
-        ['name' => '9A1', 'grade_id' => 3],
-        ['name' => '9B1', 'grade_id' => 3],
-        ['name' => '8A1', 'grade_id' => 2],
-        ['name' => '8B1', 'grade_id' => 2],
-        ['name' => '7A1', 'grade_id' => 1],
-        ['name' => '7B1', 'grade_id' => 1],
+        ['name' => '12A1', 'grade_name' => 'ថ្នាក់ទី១២'],
+        ['name' => '12B1', 'grade_name' => 'ថ្នាក់ទី១២'],
+        ['name' => '11A1', 'grade_name' => 'ថ្នាក់ទី១១'],
+        ['name' => '11B1', 'grade_name' => 'ថ្នាក់ទី១១'],
+        ['name' => '10A1', 'grade_name' => 'ថ្នាក់ទី១០'],
+        ['name' => '10B1', 'grade_name' => 'ថ្នាក់ទី១០'],
+        ['name' => '9A1', 'grade_name' => 'ថ្នាក់ទី៩'],
+        ['name' => '9B1', 'grade_name' => 'ថ្នាក់ទី៩'],
+        ['name' => '8A1', 'grade_name' => 'ថ្នាក់ទី៨'],
+        ['name' => '8B1', 'grade_name' => 'ថ្នាក់ទី៨'],
+        ['name' => '7A1', 'grade_name' => 'ថ្នាក់ទី៧'],
+        ['name' => '7B1', 'grade_name' => 'ថ្នាក់ទី៧'],
     ];
 
     foreach ($classes as $class) {
+        if (!isset($grades[$class['grade_name']])) {
+            return 'រកមិនឃើញកម្រិតថ្នាក់ ' . $class['grade_name'] . ' នៅក្នុងប្រព័ន្ធទេ។';
+        }
+
         \App\Models\SchoolClass::firstOrCreate([
             'school_id' => $schoolId,
             'class_code' => $class['name'],
         ], [
-            'grade_id' => $class['grade_id'],
+            'grade_id' => $grades[$class['grade_name']],
             'shift_id' => $shiftId,
             'student_count' => 35,
         ]);

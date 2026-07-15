@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Traits\BelongsToSchool;
 
 class TeacherAvailability extends Model
 {
+    use BelongsToSchool;
     use HasFactory, \Illuminate\Database\Eloquent\Concerns\HasUuids;
 
     protected $fillable = [
@@ -14,6 +16,10 @@ class TeacherAvailability extends Model
         'day_of_week',
         'shift_id',
         'is_available'
+    ];
+
+    protected $casts = [
+        'is_available' => 'boolean',
     ];
 
     public function teacher() { return $this->belongsTo(Teacher::class); }

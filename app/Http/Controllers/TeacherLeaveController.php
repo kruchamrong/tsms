@@ -7,6 +7,7 @@ use App\Models\Teacher;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class TeacherLeaveController extends Controller
 {
@@ -14,14 +15,23 @@ class TeacherLeaveController extends Controller
     {
         return Inertia::render('TeacherLeave/Index', [
             'leaves' => TeacherLeave::with('teacher')->orderBy('date_from', 'desc')->get(),
-            'teachers' => Teacher::all(),
+            'teachers' => Teacher::orderBy('khmer_name')->get(),
         ]);
     }
 
     public function store(Request $request)
     {
+        $schoolIdCheck = function ($query) {
+            if (auth()->check() && auth()->user()->school_id) {
+                return $query->where(function($q) {
+                    $q->where('school_id', auth()->user()->school_id)
+                      ->orWhereNull('school_id');
+                });
+            }
+        };
+
         $validated = $request->validate([
-            'teacher_id' => 'required|exists:teachers,id',
+            'teacher_id' => ['required', Rule::exists('teachers', 'id')->where($schoolIdCheck)->whereNull('deleted_at')],
             'date_from' => 'required|date',
             'date_to' => 'required|date|after_or_equal:date_from',
             'reason' => 'nullable|string|max:255',
@@ -35,9 +45,10 @@ class TeacherLeaveController extends Controller
         return redirect()->back()->with('success', 'Leave recorded successfully.');
     }
 
-    public function destroy(TeacherLeave $teacherLeave)
+    public function destroy($id)
     {
-        $teacherLeave->delete();
+        $leave = TeacherLeave::findOrFail($id);
+        $leave->delete();
         return redirect()->back()->with('success', 'Leave record deleted.');
     }
 }

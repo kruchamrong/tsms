@@ -3,49 +3,59 @@
 namespace App\Http\Controllers;
 
 use App\Models\TimetableSlot;
-use App\Models\SchoolClass;
-use App\Models\Teacher;
-use App\Services\TimetableEngine;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Services\TimetableService;
+use App\Http\Requests\ToggleTimetableSlotRequest;
+use App\Http\Requests\SwapTimetableSlotRequest;
 
 class TimetableSlotController extends Controller
 {
-    public function index(Request $request)
+    protected $timetableService;
+
+    public function __construct(TimetableService $timetableService)
     {
-        $filterType = $request->query('type', 'class'); // class or teacher
-        $filterId = $request->query('id');
-
-        $slots = [];
-        if ($filterId) {
-            $query = TimetableSlot::with(['teachingAssignment.subject', 'teachingAssignment.teacher', 'teachingAssignment.schoolClass', 'period', 'room']);
-            
-            if ($filterType === 'class') {
-                $query->whereHas('teachingAssignment', function($q) use ($filterId) {
-                    $q->where('school_class_id', $filterId);
-                });
-            } else {
-                $query->whereHas('teachingAssignment', function($q) use ($filterId) {
-                    $q->where('teacher_id', $filterId);
-                });
-            }
-            $slots = $query->get();
-        }
-
-        return Inertia::render('Timetable/Index', [
-            'classes' => SchoolClass::all(),
-            'teachers' => Teacher::all(),
-            'slots' => $slots,
-            'filterType' => $filterType,
-            'filterId' => $filterId,
-        ]);
+        $this->timetableService = $timetableService;
     }
 
-    public function generate()
+    public function index(Request $request)
     {
-        $engine = new TimetableEngine();
-        $result = $engine->generate();
+        $data = $this->timetableService->getTimetableData($request);
+        return Inertia::render('Timetable/Index', $data);
+    }
 
-        return redirect()->route('timetables.index')->with($result['status'], $result['message']);
+    public function toggle(ToggleTimetableSlotRequest $request)
+    {
+        $result = $this->timetableService->toggleSlot($request->validated());
+
+        if (isset($result['type'])) {
+            return redirect()->back()->with($result['type'], $result['message']);
+        }
+        
+        return redirect()->back();
+    }
+
+    public function swap(SwapTimetableSlotRequest $request)
+    {
+        $result = $this->timetableService->swapSlot($request->validated());
+
+        if (isset($result['type']) && $result['type'] !== 'none') {
+            return redirect()->back()->with($result['type'], $result['message']);
+        }
+        
+        return redirect()->back();
+    }
+
+    public function destroy($id)
+    {
+        $slot = TimetableSlot::findOrFail($id);
+        $slot->delete();
+        return redirect()->back()->with('success', 'បានបញ្ជូនម៉ោងទៅកាន់ឃ្លាំងផ្អាករួចរាល់។');
+    }
+
+    public function truncate()
+    {
+        $this->timetableService->truncateSlots();
+        return redirect()->back()->with('success', 'កាលវិភាគទាំងអស់ត្រូវបានលុបដោយជោគជ័យ។');
     }
 }

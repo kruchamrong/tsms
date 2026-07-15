@@ -129,7 +129,7 @@ class TeacherController extends Controller
             "Expires"             => "0"
         ];
 
-        $columns = ['teacher_code', 'khmer_name', 'english_name', 'gender', 'employment_type'];
+        $columns = ['teacher_code', 'khmer_name', 'english_name', 'gender', 'employment_type', 'phone'];
 
         $callback = function() use($columns) {
             $file = fopen('php://output', 'w');
@@ -139,8 +139,8 @@ class TeacherController extends Controller
             fputcsv($file, $columns);
             
             // Add a sample row
-            fputcsv($file, ['T001', 'សុខ សាន្ត', 'Sokh San', 'M', 'Full-Time']);
-            fputcsv($file, ['T002', 'ចាន់ ធីតា', 'Chan Thida', 'F', 'Part-Time']);
+            fputcsv($file, ['T001', 'សុខ សាន្ត', 'Sokh San', 'M', 'Full-Time', '012345678']);
+            fputcsv($file, ['T002', 'ចាន់ ធីតា', 'Chan Thida', 'F', 'Part-Time', '098765432']);
 
             fclose($file);
         };
@@ -210,6 +210,7 @@ class TeacherController extends Controller
                             'english_name' => trim($row[2] ?? ''),
                             'gender' => $gender,
                             'employment_type' => $type,
+                            'phone' => trim($row[5] ?? ''),
                         ]);
                         $imported++;
                     } catch (\Illuminate\Database\QueryException $e) {

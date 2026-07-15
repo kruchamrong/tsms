@@ -74,6 +74,7 @@ Route::middleware('auth')->group(function () {
         
         Route::get('/teachers/template', [TeacherController::class, 'downloadTemplate'])->name('teachers.template');
         Route::post('/teachers/import', [TeacherController::class, 'import'])->name('teachers.import');
+        Route::post('/teachers/import-paste', [TeacherController::class, 'importPaste'])->name('teachers.import-paste');
         Route::delete('/teachers/truncate', [TeacherController::class, 'truncate'])->name('teachers.truncate');
         Route::resource('teachers', TeacherController::class);
         Route::post('/subjects/import', [SubjectController::class, 'import'])->name('subjects.import');

@@ -141,6 +141,15 @@ const removePhoto = (teacher, event) => {
         preserveState: true,
     });
 };
+
+const deleteTeacher = (id) => {
+    if (confirm('តើអ្នកពិតជាចង់លុបទិន្នន័យគ្រូបង្រៀននេះមែនទេ?')) {
+        router.delete(route('teachers.destroy', id), {
+            preserveScroll: true
+        });
+    }
+};
+
 const confirmDeleteAll = () => {
     if (confirm('តើអ្នកពិតជាចង់លុបទិន្នន័យគ្រូបង្រៀនទាំងអស់មែនទេ?\n\nការលុបនេះនឹងធ្វើឲ្យបាត់បង់ទិន្នន័យពាក់ព័ន្ធទាំងអស់រួមមាន៖\n- មុខវិជ្ជាដែលគ្រូកំពុងបង្រៀនទាំងអស់\n- កាលវិភាគបង្រៀនរបស់គ្រូទាំងអស់\n- ម៉ោងទំនេរ និងឯកសារផ្សេងៗរបស់គ្រូ\n\nទិន្នន័យដែលលុបហើយ មិនអាចទាញយកមកវិញបានឡើយ!')) {
         router.delete(route('teachers.truncate'), {
@@ -201,35 +210,35 @@ const confirmDeleteAll = () => {
                         </div>
                         
                         <div class="overflow-x-auto">
-                            <table class="w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
+                            <table class="w-full divide-y divide-gray-100 table-fixed">
+                                <thead class="bg-gray-50 border-b border-gray-200">
                                     <tr>
-                                        <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">អត្តលេខ</th>
-                                        <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">គោត្តនាម និងនាមខ្លួន</th>
-                                        <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">អក្សរឡាតាំង</th>
-                                        <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ភេទ</th>
-                                        <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ប្រភេទការងារ</th>
-                                        <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">លេខទូរសព្ទ</th>
-                                        <th class="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">សកម្មភាព</th>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-24">អត្តលេខ</th>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider min-w-[200px]">គោត្តនាម និងនាមខ្លួន</th>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider min-w-[150px]">អក្សរឡាតាំង</th>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-24">ភេទ</th>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-36">ប្រភេទការងារ</th>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-40">លេខទូរសព្ទ</th>
+                                        <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider w-28">សកម្មភាព</th>
                                     </tr>
                                 </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
+                                <tbody class="bg-white divide-y divide-gray-100">
                                     <tr v-if="teachers.data.length === 0">
                                         <td colspan="7" class="px-6 py-4 text-center text-gray-500">ពុំមានទិន្នន័យ</td>
                                     </tr>
-                                    <tr v-for="teacher in teachers.data" :key="teacher.id" class="even:bg-gray-50 hover:bg-gray-100 transition-colors">
-                                        <td class="px-3 py-3 whitespace-nowrap">
-                                            <input type="text" v-model="teacher.teacher_code" @change="updateTeacher(teacher)" spellcheck="false" class="w-full min-w-[50px] border-0 rounded p-1 text-sm font-medium transition-colors bg-transparent hover:bg-black/5 focus:ring-1 focus:ring-blue-500 text-blue-600">
+                                    <tr v-for="teacher in teachers.data" :key="teacher.id" class="hover:bg-gray-50 transition-colors group">
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <input type="text" v-model="teacher.teacher_code" @change="updateTeacher(teacher)" spellcheck="false" class="w-full bg-transparent border border-transparent hover:bg-white hover:border-gray-300 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded px-2 py-1.5 text-sm font-medium text-blue-600 transition-all placeholder-gray-400">
                                         </td>
-                                        <td class="px-3 py-3 whitespace-nowrap">
-                                            <div class="flex items-center">
-                                                <div class="flex-shrink-0 h-10 w-10 relative group cursor-pointer" @click="triggerPhotoUpload(teacher)">
-                                                    <img v-if="teacher.photo" :src="`/storage/${teacher.photo}`" @error="teacher.photo = null" alt="" class="h-10 w-10 rounded-full object-cover">
-                                                    <div v-else class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 font-bold text-lg">
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <div class="flex items-center gap-3">
+                                                <div class="flex-shrink-0 h-10 w-10 relative group/photo cursor-pointer" @click="triggerPhotoUpload(teacher)">
+                                                    <img v-if="teacher.photo" :src="`/storage/${teacher.photo}`" @error="teacher.photo = null" alt="" class="h-10 w-10 rounded-full object-cover shadow-sm">
+                                                    <div v-else class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-lg shadow-sm">
                                                         {{ teacher.english_name ? teacher.english_name.charAt(0).toUpperCase() : (teacher.khmer_name ? teacher.khmer_name.charAt(0) : '?') }}
                                                     </div>
                                                     <!-- Hover overlay -->
-                                                    <div class="absolute inset-0 bg-black bg-opacity-40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <div class="absolute inset-0 bg-black bg-opacity-40 rounded-full flex items-center justify-center opacity-0 group-hover/photo:opacity-100 transition-opacity">
                                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -237,54 +246,51 @@ const confirmDeleteAll = () => {
                                                     </div>
                                                     
                                                     <!-- Remove photo icon -->
-                                                    <button v-if="teacher.photo" @click.stop="removePhoto(teacher, $event)" class="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 shadow-sm" title="លុបរូបថត">
+                                                    <button v-if="teacher.photo" @click.stop="removePhoto(teacher, $event)" class="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover/photo:opacity-100 transition-opacity hover:bg-red-600 shadow-sm" title="លុបរូបថត">
                                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                                         </svg>
                                                     </button>
                                                 </div>
-                                                <div class="ml-3 w-full">
-                                                    <input type="text" v-model="teacher.khmer_name" @change="updateTeacher(teacher)" spellcheck="false" class="w-full min-w-[120px] border-0 rounded p-1 text-sm font-medium transition-colors bg-transparent hover:bg-black/5 focus:ring-1 focus:ring-blue-500 text-gray-900">
-                                                </div>
+                                                <input type="text" v-model="teacher.khmer_name" @change="updateTeacher(teacher)" spellcheck="false" class="w-full bg-transparent border border-transparent hover:bg-white hover:border-gray-300 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded px-2 py-1.5 text-sm font-medium text-gray-900 transition-all placeholder-gray-400">
                                             </div>
                                         </td>
-                                        <td class="px-3 py-3 whitespace-nowrap">
-                                            <input type="text" v-model="teacher.english_name" @change="updateTeacher(teacher)" spellcheck="false" class="w-full min-w-[120px] border-0 rounded p-1 text-sm transition-colors bg-transparent hover:bg-black/5 focus:ring-1 focus:ring-blue-500 text-gray-900">
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <input type="text" v-model="teacher.english_name" @change="updateTeacher(teacher)" spellcheck="false" class="w-full bg-transparent border border-transparent hover:bg-white hover:border-gray-300 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded px-2 py-1.5 text-sm font-medium text-gray-900 transition-all placeholder-gray-400">
                                         </td>
-                                        <td class="px-3 py-3 whitespace-nowrap">
-                                            <select v-model="teacher.gender" @change="updateTeacher(teacher)" class="bg-transparent border-0 rounded p-1 text-sm w-full min-w-[60px] transition-colors cursor-pointer hover:bg-black/5 focus:ring-1 focus:ring-blue-500 text-gray-900">
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <select v-model="teacher.gender" @change="updateTeacher(teacher)" class="w-full bg-transparent border border-transparent hover:bg-white hover:border-gray-300 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded px-2 py-1.5 text-sm text-gray-700 transition-all cursor-pointer">
                                                 <option value="M">ប្រុស</option>
                                                 <option value="F">ស្រី</option>
                                             </select>
                                         </td>
-                                        <td class="px-3 py-3 whitespace-nowrap">
-                                            <select v-model="teacher.employment_type" @change="updateTeacher(teacher)" class="bg-transparent border-0 rounded p-1 text-sm w-full min-w-[90px] transition-colors cursor-pointer hover:bg-black/5 focus:ring-1 focus:ring-blue-500 text-gray-900">
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <select v-model="teacher.employment_type" @change="updateTeacher(teacher)" class="w-full bg-transparent border border-transparent hover:bg-white hover:border-gray-300 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded px-2 py-1.5 text-sm text-gray-700 transition-all cursor-pointer">
                                                 <option value="Full-Time">ពេញម៉ោង</option>
                                                 <option value="Part-Time">ក្រៅម៉ោង</option>
                                                 <option value="Visiting">គ្រូអញ្ជើញ</option>
                                             </select>
                                         </td>
-                                        <td class="px-3 py-3 whitespace-nowrap">
-                                            <textarea v-model="teacher.phone" @change="updateTeacher(teacher)" spellcheck="false" placeholder="បញ្ចូលលេខទូរសព្ទ" rows="1" class="w-full border-0 rounded p-1 text-sm min-w-[100px] resize-none leading-snug transition-colors bg-transparent hover:bg-black/5 focus:ring-1 focus:ring-blue-500 text-gray-900"></textarea>
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <input type="text" v-model="teacher.phone" @change="updateTeacher(teacher)" spellcheck="false" placeholder="-" class="w-full bg-transparent border border-transparent hover:bg-white hover:border-gray-300 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded px-2 py-1.5 text-sm font-medium text-gray-900 transition-all placeholder-gray-400">
                                         </td>
-                                        <td class="px-3 py-3 whitespace-nowrap text-sm font-medium">
-                                            <div class="flex items-center justify-end gap-1">
-                                                <a :href="route('teacher-availabilities.index', { teacher_id: teacher.id })" class="text-emerald-600 hover:text-emerald-800 p-1.5 rounded hover:bg-emerald-50 transition-colors" title="ឯកសារយោង និងម៉ោងទំនេរ">
+                                        <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-center">
+                                            <div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <a :href="route('teacher-availabilities.index', { teacher_id: teacher.id })" class="text-emerald-600 hover:text-emerald-800 p-1.5 rounded-full hover:bg-emerald-50 transition-colors" title="ឯកសារយោង និងម៉ោងទំនេរ">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
                                                     </svg>
                                                 </a>
-                                                    <Link :href="route('teachers.edit', teacher.id)" class="text-blue-500 hover:text-blue-700 p-1.5 rounded hover:bg-blue-50 transition-colors" title="កែតម្រូវលម្អិត">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                                          <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-                                                        </svg>
-                                                    </Link>
-
-                                                    <Link :href="route('teachers.destroy', teacher.id)" method="delete" as="button" class="text-red-500 hover:text-red-700 p-1.5 rounded hover:bg-red-50 transition-colors" title="លុប">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                                          <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                                                        </svg>
-                                                    </Link>
+                                                <Link :href="route('teachers.edit', teacher.id)" class="text-blue-600 hover:text-blue-800 p-1.5 rounded-full hover:bg-blue-50 transition-colors" title="កែតម្រូវលម្អិត">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                                      <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                                                    </svg>
+                                                </Link>
+                                                <button @click="deleteTeacher(teacher.id)" class="text-red-600 hover:text-red-800 p-1.5 rounded-full hover:bg-red-50 transition-colors" title="លុប">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                                      <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                                    </svg>
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>

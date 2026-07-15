@@ -313,24 +313,54 @@ const confirmDeleteAll = () => {
 
                         <!-- Paste Modal -->
                         <Modal :show="showPasteModal" @close="closePasteModal" maxWidth="3xl">
-                            <div class="p-6">
-                                <h2 class="text-lg font-medium text-gray-900 mb-4">ទាញទិន្នន័យចូលដោយផ្ទាល់ពី Excel (Copy-Paste)</h2>
-                                <p class="text-sm text-gray-600 mb-4">
-                                    សូមធ្វើការ <b>Copy</b> ទិន្នន័យពី Excel រួច <b>Paste</b> ចូលក្នុងប្រអប់ខាងក្រោមនេះ៖ <br/>
-                                    <span class="text-xs text-gray-500">(តម្រូវឲ្យមានជួរឈរតាមលំដាប់៖ អត្តលេខ, ឈ្មោះខ្មែរ, ឈ្មោះឡាតាំង, ភេទ, ប្រភេទការងារ, លេខទូរសព្ទ)</span>
-                                </p>
+                            <div class="p-8">
+                                <div class="flex items-center gap-3 mb-6">
+                                    <div class="bg-purple-100 p-2.5 rounded-full text-purple-600">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                                        </svg>
+                                    </div>
+                                    <h2 class="text-xl font-bold text-gray-800">ទាញទិន្នន័យចូលដោយផ្ទាល់ពី Excel (Copy-Paste)</h2>
+                                </div>
                                 
-                                <textarea 
-                                    v-model="pastedData" 
-                                    rows="10" 
-                                    class="w-full border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-md shadow-sm text-sm font-mono whitespace-pre"
-                                    placeholder="Paste ទិន្នន័យនៅទីនេះ... (Ctrl+V)"></textarea>
+                                <div class="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-6">
+                                    <h4 class="font-semibold text-blue-800 text-sm mb-2 flex items-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        សេចក្ដីណែនាំ៖
+                                    </h4>
+                                    <ul class="list-disc list-inside text-sm text-blue-700 space-y-1 ml-1">
+                                        <li>សូមធ្វើការ <b>Copy</b> ទិន្នន័យពីតារាង Excel រួច <b>Paste</b> (Ctrl+V) ចូលក្នុងប្រអប់ខាងក្រោមនេះ។</li>
+                                        <li>តម្រូវឲ្យមានជួរឈរតាមលំដាប់៖ <b>អត្តលេខ, ឈ្មោះខ្មែរ, ឈ្មោះឡាតាំង, ភេទ, ប្រភេទការងារ, លេខទូរសព្ទ</b>។</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="relative">
+                                    <textarea 
+                                        v-model="pastedData" 
+                                        rows="12" 
+                                        class="w-full bg-gray-50 border border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 focus:bg-white rounded-xl shadow-inner text-sm font-mono whitespace-pre p-4 transition-all duration-200"
+                                        placeholder="ឧទាហរណ៍៖&#10;T01    ស៊ឹម សុខ    Sim Sok    M    Full-Time    012345678&#10;T02    ចាន់ រដ្ឋា    Chan Ratha    F    Part-Time    098765432"></textarea>
+                                    <div class="absolute top-4 right-4 text-gray-400 pointer-events-none opacity-50" v-if="!pastedData">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
+                                    </div>
+                                </div>
 
-                                <div class="mt-6 flex justify-end gap-3">
-                                    <button @click="closePasteModal" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md text-sm font-medium hover:bg-gray-200 transition">
+                                <div class="mt-8 flex justify-end gap-3">
+                                    <button @click="closePasteModal" class="px-5 py-2.5 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 focus:ring-2 focus:ring-gray-200 transition-all">
                                         បោះបង់
                                     </button>
-                                    <button @click="submitPastedData" :disabled="isSubmittingPaste" class="px-4 py-2 bg-purple-600 text-white rounded-md text-sm font-medium hover:bg-purple-700 transition disabled:opacity-50">
+                                    <button @click="submitPastedData" :disabled="isSubmittingPaste || !pastedData.trim()" class="px-5 py-2.5 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 focus:ring-2 focus:ring-purple-300 focus:ring-offset-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-md hover:shadow-lg">
+                                        <svg v-if="isSubmittingPaste" class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                        </svg>
                                         <span v-if="isSubmittingPaste">កំពុងរក្សាទុក...</span>
                                         <span v-else>ទាញទិន្នន័យចូល</span>
                                     </button>

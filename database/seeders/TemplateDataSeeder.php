@@ -1133,7 +1133,7 @@ class TemplateDataSeeder extends Seeder
         foreach ($curricula as $curriculum) {
             $curr = Curriculum::firstOrCreate(
                 ['name' => $curriculum['name'], 'school_id' => null],
-                ['grade_id' => $curriculum['grade_id']]
+                []
             );
             
             // Sync subjects

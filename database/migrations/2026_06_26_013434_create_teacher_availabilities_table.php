@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('teacher_availabilities', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('teacher_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('teacher_id')->constrained()->cascadeOnDelete();
             $table->integer('day_of_week'); // 1 = Monday, 7 = Sunday
-            $table->foreignUuid('shift_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('shift_id')->nullable()->constrained()->cascadeOnDelete();
             $table->boolean('is_available')->default(true);
             $table->timestamps();
             
@@ -32,3 +32,4 @@ return new class extends Migration
         Schema::dropIfExists('teacher_availabilities');
     }
 };
+

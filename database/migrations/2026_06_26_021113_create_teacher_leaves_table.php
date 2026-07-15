@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('teacher_leaves', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('teacher_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('teacher_id')->constrained()->cascadeOnDelete();
             $table->date('date_from');
             $table->date('date_to');
             $table->string('reason')->nullable();
@@ -30,3 +30,4 @@ return new class extends Migration
         Schema::dropIfExists('teacher_leaves');
     }
 };
+

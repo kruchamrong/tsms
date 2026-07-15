@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('teaching_assignments', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('teacher_id')->constrained()->cascadeOnDelete();
-            $table->foreignUuid('subject_id')->constrained()->cascadeOnDelete();
-            $table->foreignUuid('school_class_id')->constrained('school_classes')->cascadeOnDelete();
-            $table->foreignUuid('shift_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('teacher_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('subject_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('school_class_id')->constrained('school_classes')->cascadeOnDelete();
+            $table->foreignId('shift_id')->constrained()->cascadeOnDelete();
             $table->integer('weekly_hours');
             $table->foreignUuid('academic_year_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignUuid('semester_id')->nullable()->constrained()->nullOnDelete();
@@ -35,3 +35,4 @@ return new class extends Migration
         Schema::dropIfExists('teaching_assignments');
     }
 };
+

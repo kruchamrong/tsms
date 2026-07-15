@@ -121,9 +121,9 @@ class TeacherController extends Controller
 
     public function truncate()
     {
-        Teacher::query()->delete();
+        Teacher::withTrashed()->forceDelete();
         
-        return redirect()->back()->with('success', 'ទិន្នន័យគ្រូបង្រៀនទាំងអស់ត្រូវបានលុបដោយជោគជ័យ។');
+        return redirect()->back()->with('success', 'ទិន្នន័យគ្រូបង្រៀនទាំងអស់ត្រូវបានលុបជាស្ថាពរដោយជោគជ័យ។');
     }
 
     public function downloadTemplate()

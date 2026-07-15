@@ -22,8 +22,6 @@ class SchoolScope implements Scope
                 \App\Models\Period::class,
                 \App\Models\AcademicYear::class,
                 \App\Models\Semester::class,
-                \App\Models\Subject::class,
-                \App\Models\Curriculum::class,
             ];
 
             $builder->where(function ($query) use ($model, $globalModels) {

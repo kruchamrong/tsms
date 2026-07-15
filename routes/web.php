@@ -175,7 +175,7 @@ Route::get('/generate-classes-santhormok', function () {
     foreach ($classes as $class) {
         \App\Models\SchoolClass::firstOrCreate([
             'school_id' => $schoolId,
-            'name' => $class['name'],
+            'class_code' => $class['name'],
         ], [
             'grade_id' => $class['grade_id'],
             'shift_id' => $shiftId,

@@ -29,8 +29,8 @@ class OnboardingController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'education_level' => 'required|in:អនុវិទ្យាល័យ,វិទ្យាល័យ,អនុវិទ្យាល័យ និងវិទ្យាល័យ',
-            'principal_name' => 'nullable|string|max:255',
-            'phone' => 'nullable|string|max:255',
+            'principal_name' => 'required|string|max:255',
+            'phone' => 'required|string|max:255',
             'address' => 'nullable|string',
         ]);
 

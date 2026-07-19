@@ -252,11 +252,11 @@ watch(() => usePage().props.flash, (flash) => {
                                     </template>
 
                                     <template #content>
-                                        <DropdownLink
+                                        <!-- <DropdownLink
                                             :href="route('school-profile.edit')"
                                         >
                                             ព័ត៌មានទូទៅសាលា
-                                        </DropdownLink>
+                                        </DropdownLink> -->
                                         <DropdownLink
                                             :href="route('profile.edit')"
                                         >
@@ -412,9 +412,9 @@ watch(() => usePage().props.flash, (flash) => {
                         </div>
 
                         <div class="mt-3 space-y-1">
-                            <ResponsiveNavLink :href="route('school-profile.edit')">
+                            <!-- <ResponsiveNavLink :href="route('school-profile.edit')">
                                 ព័ត៌មានទូទៅសាលា
-                            </ResponsiveNavLink>
+                            </ResponsiveNavLink> -->
                             <ResponsiveNavLink :href="route('profile.edit')">
                                 គណនីខ្ញុំ
                             </ResponsiveNavLink>

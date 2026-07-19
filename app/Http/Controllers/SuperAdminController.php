@@ -77,6 +77,7 @@ class SuperAdminController extends Controller
             'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
             'phone' => 'nullable|string|max:255',
             'password' => ['nullable', Rules\Password::defaults()],
+            'school_name' => 'nullable|string|max:255',
         ]);
 
         $user->name = $request->name;
@@ -88,6 +89,11 @@ class SuperAdminController extends Controller
         }
 
         $user->save();
+
+        if ($user->school_id && $request->filled('school_name')) {
+            $user->school->name = $request->school_name;
+            $user->school->save();
+        }
 
         return redirect()->back()->with('message', 'User updated successfully.');
     }

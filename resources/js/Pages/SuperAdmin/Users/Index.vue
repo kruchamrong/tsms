@@ -46,6 +46,7 @@ const editForm = useForm({
     email: '',
     phone: '',
     password: '',
+    school_name: '',
 });
 
 const openEditModal = (user) => {
@@ -54,6 +55,7 @@ const openEditModal = (user) => {
     editForm.email = user.email;
     editForm.phone = user.phone;
     editForm.password = '';
+    editForm.school_name = user.school ? user.school.name : '';
     showEditModal.value = true;
 };
 
@@ -248,6 +250,12 @@ const generatePassword = (formInstance) => {
                         <InputLabel for="edit_phone" value="លេខទូរសព្ទ" />
                         <TextInput id="edit_phone" type="text" class="mt-1 block w-full" v-model="editForm.phone" />
                         <InputError class="mt-2" :message="editForm.errors.phone" />
+                    </div>
+
+                    <div v-if="editingUser?.school">
+                        <InputLabel for="edit_school_name" value="ឈ្មោះសាលារៀន" />
+                        <TextInput id="edit_school_name" type="text" class="mt-1 block w-full" v-model="editForm.school_name" required />
+                        <InputError class="mt-2" :message="editForm.errors.school_name" />
                     </div>
 
                     <div>

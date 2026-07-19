@@ -27,7 +27,10 @@ Route::get('/setup-database-xyz', function () {
 });
 
 Route::get('/', function () {
-    return redirect()->route('login');
+    return Inertia::render('Welcome', [
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+    ]);
 });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])

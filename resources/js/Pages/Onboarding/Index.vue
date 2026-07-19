@@ -29,21 +29,16 @@ const submit = () => {
                 <p class="text-sm text-gray-600 mt-2">សូមបំពេញព័ត៌មានសាលារៀនរបស់អ្នក ដើម្បីចាប់ផ្ដើមប្រើប្រាស់ប្រព័ន្ធ។</p>
             </div>
             
-            <div class="flex justify-end mb-4">
-                <Link :href="route('logout')" method="post" as="button" class="text-sm text-red-600 hover:text-red-900 underline">
-                    ចាកចេញ (Log Out)
-                </Link>
-            </div>
 
             <form @submit.prevent="submit" class="space-y-4">
                 <div>
-                    <InputLabel for="name" value="ឈ្មោះសាលា (School Name)" />
+                    <InputLabel for="name" value="ឈ្មោះសាលា" required />
                     <TextInput id="name" type="text" class="mt-1 block w-full" v-model="form.name" required autofocus />
                     <InputError class="mt-2" :message="form.errors.name" />
                 </div>
 
                 <div>
-                    <InputLabel for="education_level" value="ភូមិសិក្សា (Education Level)" />
+                    <InputLabel for="education_level" value="កម្រិតសិក្សា" required />
                     <select id="education_level" v-model="form.education_level" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
                         <option value="អនុវិទ្យាល័យ">អនុវិទ្យាល័យ</option>
                         <option value="វិទ្យាល័យ">វិទ្យាល័យ</option>
@@ -53,19 +48,19 @@ const submit = () => {
                 </div>
 
                 <div>
-                    <InputLabel for="principal_name" value="ឈ្មោះនាយក (Principal Name) - ស្រេចចិត្ត" />
-                    <TextInput id="principal_name" type="text" class="mt-1 block w-full" v-model="form.principal_name" />
+                    <InputLabel for="principal_name" value="ឈ្មោះនាយក" required />
+                    <TextInput id="principal_name" type="text" class="mt-1 block w-full" v-model="form.principal_name" required />
                     <InputError class="mt-2" :message="form.errors.principal_name" />
                 </div>
 
                 <div>
-                    <InputLabel for="phone" value="លេខទូរសព្ទ (Phone) - ស្រេចចិត្ត" />
-                    <TextInput id="phone" type="text" class="mt-1 block w-full" v-model="form.phone" />
+                    <InputLabel for="phone" value="លេខទូរសព្ទ" required />
+                    <TextInput id="phone" type="text" class="mt-1 block w-full" v-model="form.phone" required />
                     <InputError class="mt-2" :message="form.errors.phone" />
                 </div>
 
                 <div>
-                    <InputLabel for="address" value="អាសយដ្ឋាន (Address) - ស្រេចចិត្ត" />
+                    <InputLabel for="address" value="អាសយដ្ឋាន - ស្រេចចិត្ត" />
                     <TextInput id="address" type="text" class="mt-1 block w-full" v-model="form.address" />
                     <InputError class="mt-2" :message="form.errors.address" />
                 </div>
@@ -79,6 +74,12 @@ const submit = () => {
                         <span v-if="form.processing">កំពុងរៀបចំ...</span>
                         <span v-else>ចាប់ផ្ដើមប្រើប្រាស់</span>
                     </PrimaryButton>
+                </div>
+
+                <div class="mt-4 text-center">
+                    <Link :href="route('logout')" method="post" as="button" class="text-sm text-gray-500 hover:text-gray-900 underline">
+                        មិនមែនលោកអ្នកទេមែនទេ? ចាកចេញ
+                    </Link>
                 </div>
             </form>
         </div>

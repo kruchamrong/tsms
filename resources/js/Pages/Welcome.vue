@@ -52,14 +52,14 @@ defineProps({
                     <div class="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left z-10">
                         <div class="inline-flex items-center px-4 py-2 rounded-full bg-green-50 border border-green-100 text-green-700 font-semibold text-sm mb-6 shadow-sm">
                             <span class="flex h-2 w-2 rounded-full bg-green-500 mr-2 animate-pulse"></span>
-                            ប្រព័ន្ធគ្រប់គ្រងសាលារៀន v2.0
+                            ប្រព័ន្ធ TSMS ជំនាន់ថ្មី v2.0
                         </div>
                         <h1 class="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl leading-[1.3] pb-2">
                             <span class="block mb-2">រៀបចំកាលវិភាគគ្រូ</span>
                             <span class="block bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 pb-2 whitespace-nowrap">បានយ៉ាងងាយស្រួល និងរហ័ស</span>
                         </h1>
                         <p class="mt-6 text-lg text-gray-600 sm:text-xl leading-relaxed">
-                            TSMS ជួយសម្រួលដល់ការរៀបចំកាលវិភាគបង្រៀន ជៀសវាងការជាន់ម៉ោង និងចំណេញពេលវេលាបានដល់ទៅ ៥០%។
+                            ដំណោះស្រាយដ៏ល្អឥតខ្ចោះក្នុងការចាត់ចែងម៉ោងបង្រៀន បំបាត់បញ្ហាជាន់ម៉ោង និងសន្សំសំចៃពេលវេលាបានរហូតដល់ទៅ ៥០%។
                         </p>
                         <div class="mt-10 sm:flex sm:justify-center lg:justify-start gap-4">
                             <a :href="route('register')" class="w-full sm:w-auto flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-xl text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-xl shadow-blue-500/30 hover:shadow-blue-600/40 hover:-translate-y-1">
@@ -213,25 +213,14 @@ defineProps({
 
         <!-- Footer -->
         <footer class="bg-white border-t border-gray-200">
-            <div class="max-w-7xl mx-auto py-12 px-4 overflow-hidden sm:px-6 lg:px-8">
-                <div class="md:flex md:items-center md:justify-between">
-                    <div class="flex justify-center md:justify-start items-center gap-2 mb-6 md:mb-0 text-blue-600">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                        <span class="font-bold text-2xl text-gray-900">TSMS</span>
-                    </div>
-                    <div class="flex flex-col items-center md:items-end">
-                        <p class="text-sm font-semibold text-gray-900 mb-3">ត្រូវការជំនួយ? ទំនាក់ទំនងមកយើងខ្ញុំ</p>
-                        <a href="https://t.me/PICHCHAMRONG" target="_blank" class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#229ED9]/10 text-[#229ED9] rounded-xl hover:bg-[#229ED9]/20 transition-colors font-bold">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
-                            <span>@PICHCHAMRONG</span>
-                        </a>
-                    </div>
+            <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center gap-3">
+                <div class="flex items-center gap-2 text-blue-600">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                    <span class="font-bold text-2xl text-gray-900">TSMS</span>
                 </div>
-                <div class="mt-8 border-t border-gray-100 pt-8">
-                    <p class="text-center text-sm text-gray-500">
-                        &copy; 2026 TSMS (Timetable & School Management System). រក្សាសិទ្ធិគ្រប់យ៉ាង។
-                    </p>
-                </div>
+                <p class="text-center text-sm text-gray-500">
+                    &copy; 2026 TSMS (Timetable & School Management System). រក្សាសិទ្ធិគ្រប់យ៉ាង។
+                </p>
             </div>
         </footer>
 

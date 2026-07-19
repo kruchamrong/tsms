@@ -12,28 +12,15 @@ use App\Http\Controllers\TimetableSlotController;
 use App\Http\Controllers\TeacherLeaveController;
 use App\Http\Controllers\SubstituteAssignmentController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\SchoolProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/setup-database-xyz', function () {
     try {
-        $admin = \App\Models\User::updateOrCreate(
-            ['email' => 'admin@admin.com'],
-            [
-                'name' => 'Super Admin',
-                'password' => bcrypt('password'),
-            ]
-        );
-        $admin->role = 'super_admin';
-        $admin->school_id = null;
-        $admin->save();
-
-        $seeder = new \Database\Seeders\TemplateDataSeeder();
-        $seeder->run();
-
-        return 'Database migrated, Super Admin created, and Template Data seeded successfully! Email: admin@admin.com, Password: password';
+        \Illuminate\Support\Facades\Artisan::call('migrate:fresh', ['--force' => true]);
+        \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
+        return 'Database migrated and seeded successfully!';
     } catch (\Exception $e) {
         return 'Error: ' . $e->getMessage();
     }
@@ -61,7 +48,6 @@ Route::middleware(['auth', 'is_super_admin'])->prefix('admin')->name('admin.')->
     // Global Templates Management
     Route::resource('template-subject-groups', \App\Http\Controllers\SuperAdmin\TemplateSubjectGroupController::class)->except(['create', 'show', 'edit']);
     Route::resource('template-subjects', \App\Http\Controllers\SuperAdmin\TemplateSubjectController::class)->except(['create', 'show', 'edit']);
-    Route::post('template-curricula/reorder', [\App\Http\Controllers\SuperAdmin\TemplateCurriculumController::class, 'reorder'])->name('template-curricula.reorder');
     Route::resource('template-curricula', \App\Http\Controllers\SuperAdmin\TemplateCurriculumController::class)
         ->parameters(['template-curricula' => 'template_curriculum'])
         ->except(['create', 'show', 'edit']);
@@ -79,16 +65,11 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    // Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     
     Route::middleware('is_school_admin')->group(function () {
-        Route::get('/school-profile', [SchoolProfileController::class, 'edit'])->name('school-profile.edit');
-        Route::patch('/school-profile', [SchoolProfileController::class, 'update'])->name('school-profile.update');
-        
         Route::get('/teachers/template', [TeacherController::class, 'downloadTemplate'])->name('teachers.template');
         Route::post('/teachers/import', [TeacherController::class, 'import'])->name('teachers.import');
-        Route::post('/teachers/import-paste', [TeacherController::class, 'importPaste'])->name('teachers.import-paste');
-        Route::delete('/teachers/truncate', [TeacherController::class, 'truncate'])->name('teachers.truncate');
         Route::resource('teachers', TeacherController::class);
         Route::post('/subjects/import', [SubjectController::class, 'import'])->name('subjects.import');
         Route::post('/subjects/import-templates', [SubjectController::class, 'importTemplates'])->name('subjects.import-templates');
@@ -148,86 +129,3 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
-
-Route::get('/generate-classes-santhormok', function () {
-    if (!auth()->check() || !auth()->user()->school_id) {
-        return 'Please login as a school admin first.';
-    }
-
-    $schoolId = auth()->user()->school_id;
-    $shiftId = \App\Models\Shift::where('name', 'ព្រឹក')->value('id');
-
-    if (!$shiftId) {
-        return 'រកមិនឃើញវេនសិក្សា "ព្រឹក" នៅក្នុងប្រព័ន្ធទេ។';
-    }
-
-    // Ensure grades exist
-    $seeder = new \Database\Seeders\GradeSeeder();
-    $seeder->run();
-
-    $grades = \App\Models\Grade::pluck('id', 'name')->toArray();
-
-    $classes = [
-        ['name' => '12A1', 'grade_name' => 'ថ្នាក់ទី១២'],
-        ['name' => '12B1', 'grade_name' => 'ថ្នាក់ទី១២'],
-        ['name' => '11A1', 'grade_name' => 'ថ្នាក់ទី១១'],
-        ['name' => '11B1', 'grade_name' => 'ថ្នាក់ទី១១'],
-        ['name' => '10A1', 'grade_name' => 'ថ្នាក់ទី១០'],
-        ['name' => '10B1', 'grade_name' => 'ថ្នាក់ទី១០'],
-        ['name' => '9A1', 'grade_name' => 'ថ្នាក់ទី៩'],
-        ['name' => '9B1', 'grade_name' => 'ថ្នាក់ទី៩'],
-        ['name' => '8A1', 'grade_name' => 'ថ្នាក់ទី៨'],
-        ['name' => '8B1', 'grade_name' => 'ថ្នាក់ទី៨'],
-        ['name' => '7A1', 'grade_name' => 'ថ្នាក់ទី៧'],
-        ['name' => '7B1', 'grade_name' => 'ថ្នាក់ទី៧'],
-    ];
-
-    foreach ($classes as $class) {
-        if (!isset($grades[$class['grade_name']])) {
-            return 'រកមិនឃើញកម្រិតថ្នាក់ ' . $class['grade_name'] . ' នៅក្នុងប្រព័ន្ធទេ។';
-        }
-
-        \App\Models\SchoolClass::firstOrCreate([
-            'school_id' => $schoolId,
-            'class_code' => $class['name'],
-        ], [
-            'grade_id' => $grades[$class['grade_name']],
-            'shift_id' => $shiftId,
-            'student_count' => 35,
-        ]);
-    }
-
-    return 'Classes generated successfully! You can now go back to your class management page.';
-});
-
-Route::get('/generate-rooms-santhormok', function () {
-    if (!auth()->check() || !auth()->user()->school_id) {
-        return 'Please login as a school admin first.';
-    }
-
-    $schoolId = auth()->user()->school_id;
-
-    $buildings = [
-        'A' => 10,
-        'B' => 10,
-        'C' => 10,
-        'D' => 5,
-    ];
-
-    foreach ($buildings as $building => $count) {
-        for ($i = 1; $i <= $count; $i++) {
-            $roomName = $building . str_pad($i, 2, '0', STR_PAD_LEFT); // e.g. A01, A02
-            
-            \App\Models\Room::firstOrCreate([
-                'school_id' => $schoolId,
-                'room_name' => $roomName,
-            ], [
-                'building' => $building,
-                'capacity' => 35,
-                'room_type' => 'ថ្នាក់រៀន',
-            ]);
-        }
-    }
-
-    return 'Rooms generated successfully! 35 rooms created. You can now go back to your room management page.';
-});

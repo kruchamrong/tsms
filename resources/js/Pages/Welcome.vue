@@ -50,9 +50,9 @@ defineProps({
                 <div class="lg:grid lg:grid-cols-12 lg:gap-16 items-center">
                     
                     <div class="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left z-10">
-                        <div class="inline-flex items-center px-4 py-2 rounded-full bg-blue-50 border border-blue-100 text-blue-700 font-semibold text-sm mb-6 shadow-sm">
-                            <span class="flex h-2 w-2 rounded-full bg-blue-600 mr-2 animate-pulse"></span>
-                            ប្រព័ន្ធគ្រប់គ្រងសាលារៀន ជំនាន់ថ្មី 2026
+                        <div class="inline-flex items-center px-4 py-2 rounded-full bg-green-50 border border-green-100 text-green-700 font-semibold text-sm mb-6 shadow-sm">
+                            <span class="flex h-2 w-2 rounded-full bg-green-500 mr-2 animate-pulse"></span>
+                            ប្រព័ន្ធគ្រប់គ្រងសាលារៀន v2.0
                         </div>
                         <h1 class="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl leading-[1.3] pb-2">
                             <span class="block mb-2">រៀបចំកាលវិភាគគ្រូ</span>

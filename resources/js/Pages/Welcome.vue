@@ -55,19 +55,19 @@ defineProps({
                             ជំនាន់ថ្មី v2.0
                         </span>
                         <h1 class="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl leading-[1.3] pb-2">
-                            <span class="block mb-2">រៀបចំកាលវិភាគគ្រូ</span>
-                            <span class="block bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 pb-2 whitespace-nowrap">បានយ៉ាងងាយស្រួល និងរហ័ស</span>
+                            <span class="block mb-2">លែងបារម្ភពីរឿងជាន់ម៉ោង៖</span>
+                            <span class="block bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 pb-2">ដំណោះស្រាយកាលវិភាគគ្រូសម្រាប់សាលារៀន</span>
                         </h1>
                         <p class="mt-6 text-lg text-gray-600 sm:text-xl leading-relaxed">
-                            ដំណោះស្រាយដ៏ល្អឥតខ្ចោះក្នុងការចាត់ចែងម៉ោងបង្រៀន បំបាត់បញ្ហាជាន់ម៉ោង និងសន្សំសំចៃពេលវេលាបានរហូតដល់ទៅ ៥០%។
+                            បំបាត់ភាពស្មុគស្មាញនៃការតម្រៀបកាលវិភាគប្រចាំឆ្នាំ។ TSMS ជួយសន្សំសំចៃពេលវេលារបស់រដ្ឋបាល និងគ្រូបាន ៥០% ទុកពេលដើម្បីផ្ដោតលើគុណភាពអប់រំ។
                         </p>
                         <div class="mt-10 sm:flex sm:justify-center lg:justify-start gap-4">
                             <a :href="route('register')" class="w-full sm:w-auto flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-xl text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-xl shadow-blue-500/30 hover:shadow-blue-600/40 hover:-translate-y-1">
-                                ចាប់ផ្តើមឥឡូវនេះ
+                                ចុះឈ្មោះសាកល្បងប្រើប្រាស់ដោយឥតគិតថ្លៃ
                                 <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
                             </a>
                             <a href="#pricing" class="mt-4 sm:mt-0 w-full sm:w-auto flex items-center justify-center px-8 py-4 border-2 border-gray-200 text-lg font-bold rounded-xl text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-300 transition-all duration-300 hover:-translate-y-1">
-                                មើលតារាងតម្លៃ
+                                ទស្សនាការបង្ហាញ (Demo) ផ្ទាល់
                             </a>
                         </div>
                     </div>

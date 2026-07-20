@@ -16,7 +16,7 @@ defineProps({
     <div class="min-h-screen font-sans text-gray-900 bg-gradient-to-br from-indigo-50 via-white to-blue-50 selection:bg-blue-500 selection:text-white overflow-x-hidden">
         
         <!-- Navigation -->
-        <nav class="absolute w-full top-0 z-50 bg-white/70 backdrop-blur-md border-b border-gray-100">
+        <nav class="fixed w-full top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-20">
                     <div class="flex items-center">
@@ -60,8 +60,6 @@ defineProps({
                         </h1>
                         <p class="mt-6 text-lg text-gray-600 sm:text-xl leading-relaxed">
                             បំបាត់ភាពស្មុគស្មាញនៃការតម្រៀបកាលវិភាគប្រចាំឆ្នាំ។ TSMS ជួយសន្សំសំចៃពេលវេលារបស់រដ្ឋបាល និងគ្រូបាន ៥០% ទុកពេលដើម្បីផ្ដោតលើគុណភាពអប់រំ។
-                            <br><br>
-                            ឧបករណ៍ដែលជួយសាលារបស់លោកអ្នកសន្សំពេលវេលា បង្កើនប្រសិទ្ធភាព និងធ្វើឱ្យគ្រូមានសេចក្ដីសុខ ។
                         </p>
                         <div class="mt-10 sm:flex sm:justify-center lg:justify-start gap-4">
                             <a :href="route('register')" class="w-full sm:w-auto flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-xl text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-xl shadow-blue-500/30 hover:shadow-blue-600/40 hover:-translate-y-1">
@@ -220,7 +218,10 @@ defineProps({
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                     <span class="font-bold text-2xl text-gray-900">TSMS</span>
                 </div>
-                <p class="text-center text-sm text-gray-500">
+                <p class="text-center text-gray-600 text-sm max-w-md mt-2">
+                    ឧបករណ៍ដែលជួយសាលារបស់លោកអ្នកសន្សំពេលវេលា បង្កើនប្រសិទ្ធភាព និងធ្វើឱ្យគ្រូមានសេចក្ដីសុខ ។
+                </p>
+                <p class="text-center text-sm text-gray-500 mt-2">
                     &copy; 2026 TSMS (Timetable & School Management System). រក្សាសិទ្ធិគ្រប់យ៉ាង។
                 </p>
             </div>

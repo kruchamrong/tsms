@@ -50,10 +50,10 @@ defineProps({
                 <div class="lg:grid lg:grid-cols-12 lg:gap-16 items-center">
                     
                     <div class="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left z-10">
-                        <div class="inline-flex items-center px-4 py-2 rounded-full bg-green-50 border border-green-100 text-green-700 font-semibold text-sm mb-6 shadow-sm">
-                            <span class="flex h-2 w-2 rounded-full bg-green-500 mr-2 animate-pulse"></span>
-                            ប្រព័ន្ធ TSMS ជំនាន់ថ្មី v2.0
-                        </div>
+                        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-50 text-green-700 text-sm font-semibold border border-green-100 mb-6">
+                            <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                            ជំនាន់ថ្មី v2.0
+                        </span>
                         <h1 class="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl leading-[1.3] pb-2">
                             <span class="block mb-2">រៀបចំកាលវិភាគគ្រូ</span>
                             <span class="block bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 pb-2 whitespace-nowrap">បានយ៉ាងងាយស្រួល និងរហ័ស</span>

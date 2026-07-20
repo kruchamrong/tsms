@@ -60,6 +60,8 @@ defineProps({
                         </h1>
                         <p class="mt-6 text-lg text-gray-600 sm:text-xl leading-relaxed">
                             បំបាត់ភាពស្មុគស្មាញនៃការតម្រៀបកាលវិភាគប្រចាំឆ្នាំ។ TSMS ជួយសន្សំសំចៃពេលវេលារបស់រដ្ឋបាល និងគ្រូបាន ៥០% ទុកពេលដើម្បីផ្ដោតលើគុណភាពអប់រំ។
+                            <br><br>
+                            ឧបករណ៍ដែលជួយសាលារបស់លោកអ្នកសន្សំពេលវេលា បង្កើនប្រសិទ្ធភាព និងធ្វើឱ្យគ្រូមានសេចក្ដីសុខ ។
                         </p>
                         <div class="mt-10 sm:flex sm:justify-center lg:justify-start gap-4">
                             <a :href="route('register')" class="w-full sm:w-auto flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-xl text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-xl shadow-blue-500/30 hover:shadow-blue-600/40 hover:-translate-y-1">

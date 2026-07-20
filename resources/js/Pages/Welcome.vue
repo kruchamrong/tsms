@@ -56,7 +56,7 @@ defineProps({
                         </span>
                         <h1 class="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl leading-[1.3] pb-2">
                             <span class="block mb-2">លែងបារម្ភពីរឿងជាន់ម៉ោង៖</span>
-                            <span class="block bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 pb-2">ដំណោះស្រាយកាលវិភាគគ្រូសម្រាប់សាលារៀន</span>
+                            <span class="block bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 pb-2">ដំណោះស្រាយរៀបកាលវិភាគគ្រូសម្រាប់សាលារៀន</span>
                         </h1>
                         <p class="mt-6 text-lg text-gray-600 sm:text-xl leading-relaxed">
                             បំបាត់ភាពស្មុគស្មាញនៃការតម្រៀបកាលវិភាគប្រចាំឆ្នាំ។ TSMS ជួយសន្សំសំចៃពេលវេលារបស់រដ្ឋបាល និងគ្រូបាន ៥០% ទុកពេលដើម្បីផ្ដោតលើគុណភាពអប់រំ។
@@ -213,16 +213,16 @@ defineProps({
 
         <!-- Footer -->
         <footer class="bg-white border-t border-gray-200">
-            <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center gap-3">
+            <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center gap-4">
                 <div class="flex items-center gap-2 text-blue-600">
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                     <span class="font-bold text-2xl text-gray-900">TSMS</span>
                 </div>
-                <p class="text-center text-gray-600 text-sm max-w-md mt-2">
-                    ឧបករណ៍ដែលជួយសាលារបស់លោកអ្នកសន្សំពេលវេលា បង្កើនប្រសិទ្ធភាព និងធ្វើឱ្យគ្រូមានសេចក្ដីសុខ ។
+                <p class="text-center text-gray-600 text-base max-w-2xl">
+                    ឧបករណ៍ដែលជួយសាលារបស់លោកអ្នកសន្សំពេលវេលា បង្កើនប្រសិទ្ធភាព និងធ្វើឱ្យគ្រូមានសេចក្ដីសុខ។
                 </p>
-                <p class="text-center text-sm text-gray-500 mt-2">
-                    &copy; 2026 TSMS (Timetable & School Management System). រក្សាសិទ្ធិគ្រប់យ៉ាង។
+                <p class="text-center text-sm text-gray-400 mt-4">
+                    &copy; 2026 TSMS (Timetable and School Management System). រក្សាសិទ្ធិគ្រប់យ៉ាង។
                 </p>
             </div>
         </footer>

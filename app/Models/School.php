@@ -17,7 +17,21 @@ class School extends Model
         'phone',
         'address',
         'province',
+        'trial_ends_at',
     ];
+
+    protected $casts = [
+        'trial_ends_at' => 'datetime',
+    ];
+
+    public function onTrial()
+    {
+        if (is_null($this->trial_ends_at)) {
+            return true; // No trial set means unlimited access (e.g., admin or old accounts)
+        }
+
+        return now()->lessThanOrEqualTo($this->trial_ends_at);
+    }
 
     public function users()
     {

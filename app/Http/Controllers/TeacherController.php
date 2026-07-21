@@ -119,6 +119,13 @@ class TeacherController extends Controller
         return redirect()->back()->with('success', 'គ្រូបង្រៀនត្រូវបានលុបដោយជោគជ័យ។');
     }
 
+    public function truncate()
+    {
+        Teacher::withTrashed()->forceDelete();
+        
+        return redirect()->back()->with('success', 'ទិន្នន័យគ្រូបង្រៀនទាំងអស់ត្រូវបានលុបជាស្ថាពរដោយជោគជ័យ។');
+    }
+
     public function downloadTemplate()
     {
         $headers = [
@@ -129,7 +136,7 @@ class TeacherController extends Controller
             "Expires"             => "0"
         ];
 
-        $columns = ['teacher_code', 'khmer_name', 'english_name', 'gender', 'employment_type'];
+        $columns = ['teacher_code', 'khmer_name', 'english_name', 'gender', 'employment_type', 'phone'];
 
         $callback = function() use($columns) {
             $file = fopen('php://output', 'w');
@@ -139,8 +146,8 @@ class TeacherController extends Controller
             fputcsv($file, $columns);
             
             // Add a sample row
-            fputcsv($file, ['T001', 'សុខ សាន្ត', 'Sokh San', 'M', 'Full-Time']);
-            fputcsv($file, ['T002', 'ចាន់ ធីតា', 'Chan Thida', 'F', 'Part-Time']);
+            fputcsv($file, ['T001', 'សុខ សាន្ត', 'Sokh San', 'M', 'Full-Time', '012345678']);
+            fputcsv($file, ['T002', 'ចាន់ ធីតា', 'Chan Thida', 'F', 'Part-Time', '098765432']);
 
             fclose($file);
         };
@@ -210,6 +217,7 @@ class TeacherController extends Controller
                             'english_name' => trim($row[2] ?? ''),
                             'gender' => $gender,
                             'employment_type' => $type,
+                            'phone' => trim($row[5] ?? ''),
                         ]);
                         $imported++;
                     } catch (\Illuminate\Database\QueryException $e) {
@@ -241,6 +249,96 @@ class TeacherController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             fclose($handle);
+            return redirect()->back()->with('error', "មានកំហុសប្រព័ន្ធ (System Error) កំឡុងពេលនាំចូលទិន្នន័យ។");
+        }
+    }
+
+    public function importPaste(Request $request)
+    {
+        $request->validate([
+            'data' => 'required|string',
+        ]);
+
+        $pastedData = trim($request->data);
+        $rows = explode("\n", $pastedData);
+        
+        $imported = 0;
+        $errors = [];
+        $rowNum = 0;
+
+        DB::beginTransaction();
+
+        try {
+            foreach ($rows as $line) {
+                $rowNum++;
+                $line = trim($line);
+                if (empty($line)) continue;
+
+                // Split by tab (Excel copy-paste uses tabs)
+                $columns = explode("\t", $line);
+                
+                // Usually copied data from Excel might include a header row if user selected it
+                // We skip if it looks like a header (e.g. contains 'teacher_code' or 'អត្តលេខ')
+                if ($rowNum === 1 && (stripos($columns[0] ?? '', 'teacher_code') !== false || stripos($columns[0] ?? '', 'អត្តលេខ') !== false)) {
+                    continue;
+                }
+
+                if (count($columns) >= 1) {
+                    $code = trim($columns[0] ?? '');
+                    
+                    if (empty($code)) {
+                        $errors[] = "ជួរទី $rowNum: មិនមានអត្តលេខ";
+                        continue;
+                    }
+
+                    if (Teacher::withTrashed()->where('teacher_code', $code)->exists()) {
+                        $errors[] = "ជួរទី $rowNum: អត្តលេខ '$code' មានរួចហើយ";
+                        continue;
+                    }
+
+                    try {
+                        $genderInput = trim($columns[3] ?? '');
+                        $gender = (strtoupper($genderInput) === 'F' || $genderInput === 'ស្រី' || $genderInput === 'នារី') ? 'F' : 'M';
+                        
+                        $typeInput = trim($columns[4] ?? '');
+                        $type = (strtoupper($typeInput) === 'PART-TIME' || $typeInput === 'ក្រៅម៉ោង') ? 'Part-Time' : 'Full-Time';
+
+                        Teacher::create([
+                            'teacher_code' => $code,
+                            'khmer_name' => trim($columns[1] ?? ''),
+                            'english_name' => trim($columns[2] ?? ''),
+                            'gender' => $gender,
+                            'employment_type' => $type,
+                            'phone' => trim($columns[5] ?? ''),
+                        ]);
+                        $imported++;
+                    } catch (\Illuminate\Database\QueryException $e) {
+                        $errors[] = "ជួរទី $rowNum: បញ្ហាទិន្នន័យ (Database Error)";
+                        continue;
+                    } catch (\Exception $e) {
+                        $errors[] = "ជួរទី $rowNum: បញ្ហាមិនស្គាល់";
+                        continue;
+                    }
+                } else {
+                    $errors[] = "ជួរទី $rowNum: ទម្រង់ទិន្នន័យមិនត្រឹមត្រូវ";
+                }
+            }
+
+            if (count($errors) > 0) {
+                DB::rollBack();
+                $errorSummary = implode(', ', array_slice($errors, 0, 5));
+                if (count($errors) > 5) {
+                    $errorSummary .= " និង " . (count($errors) - 5) . " បញ្ហាផ្សេងទៀត...";
+                }
+                return redirect()->back()->with('error', "បរាជ័យក្នុងការនាំចូល! មានបញ្ហា៖ " . $errorSummary);
+            }
+
+            DB::commit();
+            $message = "បាននាំចូលទិន្នន័យជោគជ័យចំនួន $imported នាក់។";
+            return redirect()->back()->with('success', $message);
+            
+        } catch (\Exception $e) {
+            DB::rollBack();
             return redirect()->back()->with('error', "មានកំហុសប្រព័ន្ធ (System Error) កំឡុងពេលនាំចូលទិន្នន័យ។");
         }
     }

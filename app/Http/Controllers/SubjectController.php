@@ -111,20 +111,27 @@ class SubjectController extends Controller {
         $schoolId = auth()->user()->school_id;
         $imported = 0;
 
-        foreach ($globalSubjects as $gs) {
-            $exists = Subject::where('school_id', $schoolId)
-                ->where('subject_code', $gs->subject_code)
-                ->exists();
-                
-            if (!$exists) {
-                $newSub = $gs->replicate();
-                $newSub->school_id = $schoolId;
-                $newSub->save();
-                $imported++;
-            }
-        }
+        try {
+            DB::transaction(function () use ($globalSubjects, $schoolId, &$imported) {
+                foreach ($globalSubjects as $gs) {
+                    $exists = Subject::where('school_id', $schoolId)
+                        ->where('subject_code', $gs->subject_code)
+                        ->exists();
+                        
+                    if (!$exists) {
+                        $newSub = $gs->replicate();
+                        $newSub->school_id = $schoolId;
+                        $newSub->save();
+                        $imported++;
+                    }
+                }
+            });
 
-        return redirect()->back()->with('success', "បាននាំចូលមុខវិជ្ជាគំរូចំនួន {$imported} មុខវិជ្ជាដោយជោគជ័យ។");
+            return redirect()->back()->with('success', "បាននាំចូលមុខវិជ្ជាគំរូចំនួន {$imported} មុខវិជ្ជាដោយជោគជ័យ។");
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Import Template Subjects Error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'បរាជ័យក្នុងការនាំចូលមុខវិជ្ជាគំរូ។ សូមពិនិត្យមើលសារកំហុស: ' . $e->getMessage());
+        }
     }
 
     public function downloadTemplate()

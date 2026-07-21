@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('school_classes', function (Blueprint $table) {
             $table->foreignId('room_id')->nullable()->after('student_count')->constrained('rooms')->nullOnDelete();
-            $table->foreignId('shift_id')->nullable()->after('room_id')->constrained('shifts')->nullOnDelete();
+            $table->foreignUuid('shift_id')->nullable()->after('room_id')->constrained('shifts')->nullOnDelete();
         });
     }
 
@@ -30,4 +30,3 @@ return new class extends Migration
         });
     }
 };
-

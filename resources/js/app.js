@@ -26,9 +26,10 @@ createInertiaApp({
     },
 });
 
-// Global converter for Khmer numerals to Arabic numerals
+/*
+// Global converter for Khmer numerals to Arabic numerals (DISABLED - CAUSES VUE HYDRATION ISSUES)
 function convertKhmerNumbers(node) {
-    if (node.nodeType === 3) { // TEXT_NODE
+    if (node.nodeType === 3) { 
         if (/[០-៩]/.test(node.nodeValue)) {
             const khmerNumbers = ['០', '១', '២', '៣', '៤', '៥', '៦', '៧', '៨', '៩'];
             node.nodeValue = node.nodeValue.replace(/[០-៩]/g, (match) => khmerNumbers.indexOf(match));
@@ -40,10 +41,8 @@ function convertKhmerNumbers(node) {
     }
 }
 
-// Initial conversion
 document.addEventListener('DOMContentLoaded', () => {
     convertKhmerNumbers(document.body);
-    
     const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
             if (mutation.type === 'childList') {
@@ -53,10 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
-
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true,
-        characterData: true
-    });
+    observer.observe(document.body, { childList: true, subtree: true, characterData: true });
 });
+*/

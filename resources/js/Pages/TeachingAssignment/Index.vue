@@ -403,17 +403,17 @@ const quickAssign = (subjectId) => {
 
                         <div v-else class="overflow-hidden border-t border-gray-200">
                             <table class="w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
+                                <thead class="bg-gray-50 border-b border-gray-200">
                                     <tr>
-                                        <th class="px-4 py-3 text-left text-xs font-semibold text-blue-800 uppercase tracking-wider w-1/4">មុខវិជ្ជា</th>
-                                        <th class="px-4 py-3 text-left text-xs font-semibold text-blue-800 uppercase tracking-wider w-1/4">ឈ្មោះគ្រូបង្រៀន</th>
-                                        <th class="px-4 py-3 text-left text-xs font-semibold text-blue-800 uppercase tracking-wider w-auto">ថ្នាក់</th>
-                                        <th class="px-3 py-3 text-center text-xs font-semibold text-blue-800 uppercase tracking-wider w-16">សកម្មភាព</th>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-1/4">មុខវិជ្ជា</th>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-1/4">ឈ្មោះគ្រូបង្រៀន</th>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-auto">ថ្នាក់</th>
+                                        <th class="px-3 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider w-16">សកម្មភាព</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-100">
                                     <tr v-for="group in assignments.data" :key="group.teacher_id + '-' + group.subject_id" 
-                                        class="hover:bg-blue-50 transition-colors"
+                                        class="hover:bg-gray-50 transition-colors group"
                                         @dragover.prevent
                                         @dragenter.prevent
                                         @drop="onDrop($event, group.teacher_id, group.subject_id)">
@@ -467,9 +467,11 @@ const quickAssign = (subjectId) => {
                                             </div>
                                         </td>
                                         <td class="px-3 py-4 text-center align-top">
-                                            <button @click="deleteGroup(group.teacher_id, group.subject_id)" class="text-gray-400 hover:text-red-600 transition-colors bg-white hover:bg-red-50 p-1.5 rounded-md border border-transparent hover:border-red-100 shadow-sm" title="លុបម៉ោងមុខវិជ្ជានេះ">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                            </button>
+                                            <div class="flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <button @click="deleteGroup(group.teacher_id, group.subject_id)" class="text-red-600 hover:text-red-800 p-1.5 rounded-full hover:bg-red-50 transition-colors" title="លុបម៉ោងមុខវិជ្ជានេះ">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                     <tr v-if="assignments.data.length === 0">
@@ -584,13 +586,13 @@ const quickAssign = (subjectId) => {
 
                             <div class="overflow-x-auto border rounded-lg border-gray-200">
                                 <table class="min-w-full divide-y divide-gray-200">
-                                    <thead class="bg-gray-50">
+                                    <thead class="bg-gray-50 border-b border-gray-200">
                                         <tr>
-                                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">មុខវិជ្ជា</th>
-                                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">គ្រូបង្រៀន</th>
-                                            <th class="px-6 py-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">ម៉ោងតម្រូវការ</th>
-                                            <th class="px-6 py-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">ម៉ោងបានរៀបចំ</th>
-                                            <th class="px-6 py-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">ស្ថានភាព</th>
+                                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">មុខវិជ្ជា</th>
+                                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">គ្រូបង្រៀន</th>
+                                            <th class="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">ម៉ោងតម្រូវការ</th>
+                                            <th class="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">ម៉ោងបានរៀបចំ</th>
+                                            <th class="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">ស្ថានភាព</th>
                                         </tr>
                                     </thead>
                                     <tbody class="bg-white divide-y divide-gray-200">

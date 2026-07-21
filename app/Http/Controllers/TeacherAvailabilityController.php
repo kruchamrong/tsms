@@ -75,10 +75,6 @@ class TeacherAvailabilityController extends Controller
         }
 
         DB::transaction(function () use ($validated) {
-            TeacherAvailability::where('teacher_id', $validated['teacher_id'])->delete();
-
-            \Log::info('Validated availabilities count: ' . (isset($validated['availabilities']) ? count($validated['availabilities']) : 'none'));
-
             if (!empty($validated['availabilities'])) {
                 $schoolId = auth()->check() ? auth()->user()->school_id : null;
                 $insertData = collect($validated['availabilities'])->map(function ($item) use ($validated, $schoolId) {
@@ -95,14 +91,30 @@ class TeacherAvailabilityController extends Controller
                 })->toArray();
                 
                 if (count($insertData) > 0) {
-                    TeacherAvailability::insert($insertData);
+                    TeacherAvailability::upsert(
+                        $insertData,
+                        ['teacher_id', 'day_of_week', 'shift_id'], // unique columns
+                        ['is_available', 'updated_at'] // columns to update if exists
+                    );
                 }
             }
             
-            TeacherAvailabilityRemark::where('teacher_id', $validated['teacher_id'])->delete();
-            
             if (!empty($validated['remarks'])) {
                 $schoolId = auth()->check() ? auth()->user()->school_id : null;
+                
+                // First delete empty remarks
+                $emptyRemarksDays = collect($validated['remarks'])
+                    ->filter(fn($item) => empty($item['remarks']))
+                    ->pluck('day_of_week')
+                    ->toArray();
+                    
+                if (count($emptyRemarksDays) > 0) {
+                    TeacherAvailabilityRemark::where('teacher_id', $validated['teacher_id'])
+                        ->whereIn('day_of_week', $emptyRemarksDays)
+                        ->delete();
+                }
+
+                // Then upsert non-empty remarks
                 $insertRemarks = collect($validated['remarks'])->filter(function($item) {
                     return !empty($item['remarks']);
                 })->map(function ($item) use ($validated, $schoolId) {
@@ -118,7 +130,11 @@ class TeacherAvailabilityController extends Controller
                 })->toArray();
                 
                 if (count($insertRemarks) > 0) {
-                    TeacherAvailabilityRemark::insert($insertRemarks);
+                    TeacherAvailabilityRemark::upsert(
+                        $insertRemarks,
+                        ['teacher_id', 'day_of_week'], // unique columns
+                        ['remarks', 'updated_at'] // columns to update if exists
+                    );
                 }
             }
         });

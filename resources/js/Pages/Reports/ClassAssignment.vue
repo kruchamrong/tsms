@@ -61,10 +61,9 @@ const printReport = () => {
                      
                     <!-- Header -->
                     <div class="flex justify-between items-start mb-2">
-                        <!-- Ministry -->
                         <div class="text-center font-content">
-                            <p class="text-[11px]">មន្ទីរអប់រំយុវជននិងកីឡា (រាជធានី/ខេត្ត)</p>
-                            <p class="text-[11px] mt-1">{{ school?.name || 'វិទ្យាល័យជាស៊ីមសន្ធរម៉ុក' }}</p>
+                            <p class="text-[11px]">មន្ទីរអប់រំ យុវជន និងកីឡា {{ school?.province || 'រាជធានី/ខេត្ត' }}</p>
+                            <p class="text-[11px] mt-1">{{ school?.name || 'ឈ្មោះសាលា' }}</p>
                         </div>
                         <!-- Kingdom -->
                         <div class="text-center font-moul">
@@ -123,7 +122,7 @@ const printReport = () => {
                             <p class="font-bold font-moul text-sm mb-24">នាយកសាលា</p>
                         </div>
                         <div class="text-center mr-8">
-                            <p class="text-sm mb-2 text-gray-800">ធ្វើនៅ...........................ថ្ងៃទី...........ខែ...........ឆ្នាំ...........</p>
+                            <p class="text-sm mb-2 text-gray-800">ធ្វើនៅ {{ school?.province || '...........................' }}, ថ្ងៃទី...........ខែ...........ឆ្នាំ...........</p>
                             <p class="font-bold text-sm mb-24 text-gray-800">អ្នករៀបចំកាលវិភាគ</p>
                         </div>
                     </div>

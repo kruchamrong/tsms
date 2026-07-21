@@ -16,6 +16,27 @@ const unreadNotifications = computed(() => {
     return Object.values(notifs);
 });
 
+const trialWarning = computed(() => {
+    const school = usePage().props.auth.school;
+    if (!school || !school.trial_ends_at) return null;
+    
+    const endsAt = new Date(school.trial_ends_at);
+    const now = new Date();
+    const diffTime = endsAt - now;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays <= 3 && diffDays > 0) {
+        const formattedDate = endsAt.toLocaleDateString('km-KH', { 
+            day: 'numeric', month: 'long', year: 'numeric' 
+        });
+        return {
+            message: `គណនីសាកល្បងរបស់អ្នកនឹងផុតកំណត់នៅ ${diffDays} ថ្ងៃទៀត (ថ្ងៃទី ${formattedDate})។ សូមទាក់ទងអ្នកគ្រប់គ្រងដើម្បីបន្តសុពលភាព!`,
+            link: 'https://t.me/PICHCHAMRONG'
+        };
+    }
+    return null;
+});
+
 const showToast = ref(false);
 const toastMessage = ref('');
 const toastType = ref('success');
@@ -178,8 +199,11 @@ watch(() => usePage().props.flash, (flash) => {
                                         </template>
 
                                         <template #content>
+                                            <DropdownLink :href="route('admin.schools.index')" :active="route().current('admin.schools.*')">
+                                                បញ្ជីសាលារៀន
+                                            </DropdownLink>
                                             <DropdownLink :href="route('admin.users.index')" :active="route().current('admin.users.*')">
-                                                គ្រប់គ្រងគណនីសាលា
+                                                អ្នកប្រើប្រាស់
                                             </DropdownLink>
                                             <DropdownLink :href="route('admin.audits.index')" :active="route().current('admin.audits.*')">
                                                 ប្រវត្តិសកម្មភាព
@@ -252,10 +276,15 @@ watch(() => usePage().props.flash, (flash) => {
                                     </template>
 
                                     <template #content>
+                                        <!-- <DropdownLink
+                                            :href="route('school-profile.edit')"
+                                        >
+                                            ព័ត៌មានទូទៅសាលា
+                                        </DropdownLink> -->
                                         <DropdownLink
                                             :href="route('profile.edit')"
                                         >
-                                            គណនីរបស់ខ្ញុំ
+                                            គណនីខ្ញុំ
                                         </DropdownLink>
                                         <DropdownLink
                                             :href="route('logout')"
@@ -379,8 +408,11 @@ watch(() => usePage().props.flash, (flash) => {
 
                         <div v-if="$page.props.auth.user.role === 'super_admin'" class="border-t border-gray-200 pt-2 pb-1 mt-2">
                             <div class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">គ្រប់គ្រងប្រព័ន្ធ</div>
+                            <ResponsiveNavLink :href="route('admin.schools.index')" :active="route().current('admin.schools.*')" class="pl-8">
+                                បញ្ជីសាលារៀន
+                            </ResponsiveNavLink>
                             <ResponsiveNavLink :href="route('admin.users.index')" :active="route().current('admin.users.*')" class="pl-8">
-                                គ្រប់គ្រងសាលា
+                                អ្នកប្រើប្រាស់
                             </ResponsiveNavLink>
                             <ResponsiveNavLink :href="route('admin.audits.index')" :active="route().current('admin.audits.*')" class="pl-8">
                                 ប្រវត្តិសកម្មភាព
@@ -407,8 +439,11 @@ watch(() => usePage().props.flash, (flash) => {
                         </div>
 
                         <div class="mt-3 space-y-1">
+                            <!-- <ResponsiveNavLink :href="route('school-profile.edit')">
+                                ព័ត៌មានទូទៅសាលា
+                            </ResponsiveNavLink> -->
                             <ResponsiveNavLink :href="route('profile.edit')">
-                                គណនីរបស់ខ្ញុំ
+                                គណនីខ្ញុំ
                             </ResponsiveNavLink>
                             <ResponsiveNavLink
                                 :href="route('logout')"
@@ -421,6 +456,16 @@ watch(() => usePage().props.flash, (flash) => {
                     </div>
                 </div>
             </nav>
+
+            <div v-if="trialWarning" class="bg-red-500 p-2 text-center text-white font-medium text-sm flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3">
+                <span>{{ trialWarning.message }}</span>
+                <a :href="trialWarning.link" target="_blank" class="inline-flex items-center gap-1 bg-white/20 hover:bg-white/30 px-3 py-1 rounded-full transition-colors font-bold text-xs">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.664 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                    </svg>
+                    Telegram
+                </a>
+            </div>
 
             <!-- Page Heading -->
             <header

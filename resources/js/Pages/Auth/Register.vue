@@ -26,7 +26,7 @@ const submit = () => {
 
         <form @submit.prevent="submit">
             <div>
-                <InputLabel for="name" value="Name" />
+                <InputLabel for="name" value="ឈ្មោះ (Name)" required />
 
                 <TextInput
                     id="name"
@@ -41,8 +41,9 @@ const submit = () => {
                 <InputError class="mt-2" :message="form.errors.name" />
             </div>
 
+
             <div class="mt-4">
-                <InputLabel for="email" value="Email" />
+                <InputLabel for="email" value="អ៊ីមែល (Email)" required />
 
                 <TextInput
                     id="email"
@@ -57,7 +58,7 @@ const submit = () => {
             </div>
 
             <div class="mt-4">
-                <InputLabel for="password" value="Password" />
+                <InputLabel for="password" value="ពាក្យសម្ងាត់ (Password)" required />
 
                 <TextInput
                     id="password"
@@ -74,7 +75,8 @@ const submit = () => {
             <div class="mt-4">
                 <InputLabel
                     for="password_confirmation"
-                    value="Confirm Password"
+                    value="បញ្ជាក់ពាក្យសម្ងាត់ (Confirm)"
+                    required
                 />
 
                 <TextInput
@@ -97,7 +99,7 @@ const submit = () => {
                     :href="route('login')"
                     class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 >
-                    Already registered?
+                    មានគណនីរួចហើយ?
                 </Link>
 
                 <PrimaryButton
@@ -105,7 +107,7 @@ const submit = () => {
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
                 >
-                    Register
+                    ចុះឈ្មោះ
                 </PrimaryButton>
             </div>
         </form>

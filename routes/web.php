@@ -27,7 +27,10 @@ Route::get('/setup-database-xyz', function () {
 });
 
 Route::get('/', function () {
-    return redirect()->route('login');
+    return Inertia::render('Welcome', [
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+    ]);
 });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
@@ -35,6 +38,12 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->name('dashboard');
 
 Route::get('/test-periods', function() { return App\Models\Period::all(); });
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/billing/upgrade', function () {
+        return Inertia::render('Billing/Upgrade');
+    })->name('billing.upgrade');
+});
 
 Route::middleware(['auth', 'is_super_admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/users', [\App\Http\Controllers\SuperAdminController::class, 'index'])->name('users.index');
@@ -55,6 +64,10 @@ Route::middleware(['auth', 'is_super_admin'])->prefix('admin')->name('admin.')->
     Route::resource('template-periods', \App\Http\Controllers\SuperAdmin\TemplatePeriodController::class)
         ->parameters(['template-periods' => 'template_period'])
         ->except(['create', 'show', 'edit']);
+
+    // Manage Schools
+    Route::get('/schools', [\App\Http\Controllers\SuperAdmin\SchoolController::class, 'index'])->name('schools.index');
+    Route::post('/schools/{school}/extend-validity', [\App\Http\Controllers\SuperAdmin\SchoolController::class, 'extendValidity'])->name('schools.extend-validity');
 });
 
 Route::middleware(['auth'])->group(function () {

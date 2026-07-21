@@ -29,15 +29,17 @@ class OnboardingController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'education_level' => 'required|in:អនុវិទ្យាល័យ,វិទ្យាល័យ,អនុវិទ្យាល័យ និងវិទ្យាល័យ',
-            'principal_name' => 'nullable|string|max:255',
-            'phone' => 'nullable|string|max:255',
+            'principal_name' => 'required|string|max:255',
+            'phone' => 'required|string|max:255',
             'address' => 'nullable|string',
         ]);
 
         DB::beginTransaction();
         try {
             // Create School
-            $school = School::create($request->only('name', 'education_level', 'principal_name', 'phone', 'address'));
+            $schoolData = $request->only('name', 'education_level', 'principal_name', 'phone', 'address');
+            $schoolData['trial_ends_at'] = now()->addDays(14);
+            $school = School::create($schoolData);
 
             // Update User
             $user = auth()->user();

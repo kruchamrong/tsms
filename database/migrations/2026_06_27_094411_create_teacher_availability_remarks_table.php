@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('teacher_availability_remarks', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('teacher_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('teacher_id')->constrained()->cascadeOnDelete();
             $table->integer('day_of_week'); // 1 = Monday, 7 = Sunday
             $table->text('remarks')->nullable();
             $table->timestamps();
@@ -31,4 +31,3 @@ return new class extends Migration
         Schema::dropIfExists('teacher_availability_remarks');
     }
 };
-

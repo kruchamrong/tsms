@@ -151,8 +151,8 @@ const getSubjectHours = (teacher) => {
             <div class="flex justify-between items-start mb-6 print:mb-4 px-4 print:px-0">
                 <!-- Ministry -->
                 <div class="text-center font-content text-sm leading-relaxed pt-9">
-                    <p>មន្ទីរអប់រំ យុវជន និងកីឡា រាជធានី/ខេត្ត</p>
-                    <p class="mt-0.5 font-bold">{{ school?.name || 'វិទ្យាល័យជាស៊ីមសន្ធរម៉ុក' }}</p>
+                    <p>មន្ទីរអប់រំ យុវជន និងកីឡា {{ school?.province || 'រាជធានី/ខេត្ត' }}</p>
+                    <p class="mt-0.5 font-bold">{{ school?.name || 'ឈ្មោះសាលា' }}</p>
                 </div>
                 
                 <!-- Kingdom -->
@@ -285,7 +285,7 @@ const getSubjectHours = (teacher) => {
                     <p class="font-bold font-moul mb-12 print:mb-6 print:text-sm">នាយកសាលា</p>
                 </div>
                 <div class="text-center w-80 mr-8">
-                    <p class="mb-1 print:mb-0.5 text-center print:text-sm">រាជធានី.....................ថ្ងៃទី...... ខែ...... ឆ្នាំ......</p>
+                    <p class="mb-1 print:mb-0.5 text-center print:text-sm">{{ school?.province || '.....................' }}, ថ្ងៃទី...... ខែ...... ឆ្នាំ......</p>
                     <p class="font-bold mb-10 print:mb-6 text-center print:text-sm">ហត្ថលេខា និងឈ្មោះគ្រូបង្រៀន</p>
                     <p class="font-bold text-center border-b border-dashed border-gray-400 mb-1">&nbsp;</p>
                 </div>

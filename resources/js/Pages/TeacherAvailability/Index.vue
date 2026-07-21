@@ -332,26 +332,26 @@ const deleteDocument = (id) => {
                             <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-3 border-gray-100">សូមធីកក្នុងប្រអប់ដែលគ្រូអាចបង្រៀនបាន</h3>
                     <form @submit.prevent="submit">
                         <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200 border">
-                                <thead class="bg-gray-50">
+                            <table class="min-w-full divide-y divide-gray-100">
+                                <thead class="bg-gray-50 border-b border-gray-200">
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase border">ថ្ងៃ</th>
-                                        <th v-for="shift in shifts" :key="shift.id" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase border">
+                                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">ថ្ងៃ</th>
+                                        <th v-for="shift in shifts" :key="shift.id" class="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                             {{ shift.name.split(' (')[0] }}
                                         </th>
-                                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase border">ការពណ៌នា</th>
+                                        <th class="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">ការពណ៌នា</th>
                                     </tr>
                                 </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                    <tr v-for="(day, index) in days" :key="day.id" class="even:bg-gray-50 hover:bg-gray-100 transition-colors">
-                                        <td class="px-6 py-4 whitespace-nowrap font-medium border">{{ day.name }}</td>
-                                        <td v-for="shift in shifts" :key="shift.id" class="px-6 py-4 whitespace-nowrap text-center border">
+                                <tbody class="bg-white divide-y divide-gray-100">
+                                    <tr v-for="(day, index) in days" :key="day.id" class="hover:bg-gray-50 transition-colors group">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ day.name }}</td>
+                                        <td v-for="shift in shifts" :key="shift.id" class="px-6 py-4 whitespace-nowrap text-center">
                                             <input type="checkbox" 
                                                    :checked="isChecked(day.id, shift.id)"
                                                    @change="toggleCheck(day.id, shift.id)"
-                                                   class="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                                   class="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer transition-colors">
                                         </td>
-                                        <td class="px-4 py-2 border align-middle min-w-[250px]">
+                                        <td class="px-4 py-2 align-middle min-w-[250px]">
                                             <input type="text" v-model="form.remarks[index].remarks" @input="autoSave()" spellcheck="false" class="w-full bg-transparent border-0 hover:bg-black/5 focus:ring-1 focus:ring-blue-500 rounded p-1 text-sm transition-colors" placeholder="ពណ៌នា...">
                                         </td>
                                     </tr>
@@ -371,20 +371,20 @@ const deleteDocument = (id) => {
                         </h3>
                         
                         <div class="overflow-x-auto bg-white border border-gray-200 rounded-lg shadow-sm">
-                            <table class="min-w-full divide-y divide-gray-200 table-fixed">
-                                <thead class="bg-gray-50">
+                            <table class="min-w-full divide-y divide-gray-100 table-fixed">
+                                <thead class="bg-gray-50 border-b border-gray-200">
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-32">កាលបរិច្ឆេទ</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ចំណងជើងឯកសារ</th>
-                                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-32">ប្រភេទឯកសារ</th>
-                                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-40">សកម្មភាព</th>
+                                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-32">កាលបរិច្ឆេទ</th>
+                                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">ចំណងជើងឯកសារ</th>
+                                        <th class="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider w-32">ប្រភេទឯកសារ</th>
+                                        <th class="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider w-40">សកម្មភាព</th>
                                     </tr>
                                 </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
+                                <tbody class="bg-white divide-y divide-gray-100">
                                     <tr v-if="!documents || documents.length === 0">
                                         <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500 italic">មិនទាន់មានឯកសារនៅឡើយទេ</td>
                                     </tr>
-                                    <tr v-for="doc in documents" :key="doc.id" class="hover:bg-gray-50 transition-colors">
+                                    <tr v-for="doc in documents" :key="doc.id" class="hover:bg-gray-50 transition-colors group">
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-left">
                                             {{ new Date(doc.created_at).toLocaleDateString('en-GB') }}
                                         </td>
@@ -395,19 +395,19 @@ const deleteDocument = (id) => {
                                             {{ doc.file_type || 'Unknown' }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                                            <div class="flex items-center justify-center gap-3">
-                                                <a :href="route('teacher-documents.show', doc.id)" target="_blank" class="text-blue-500 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 p-1.5 rounded transition" title="មើល (View)">
+                                            <div class="flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <a :href="route('teacher-documents.show', doc.id)" target="_blank" class="text-blue-600 hover:text-blue-800 p-1.5 rounded-full hover:bg-blue-50 transition-colors" title="មើល (View)">
                                                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                                     </svg>
                                                 </a>
-                                                <a :href="route('teacher-documents.download', doc.id)" target="_blank" class="text-green-500 hover:text-green-700 bg-green-50 hover:bg-green-100 p-1.5 rounded transition" title="ទាញយក (Download)">
+                                                <a :href="route('teacher-documents.download', doc.id)" target="_blank" class="text-green-600 hover:text-green-800 p-1.5 rounded-full hover:bg-green-50 transition-colors" title="ទាញយក (Download)">
                                                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                                                     </svg>
                                                 </a>
-                                                <button type="button" @click="deleteDocument(doc.id)" class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 p-1.5 rounded transition" title="លុប (Delete)">
+                                                <button type="button" @click="deleteDocument(doc.id)" class="text-red-600 hover:text-red-800 p-1.5 rounded-full hover:bg-red-50 transition-colors" title="លុប (Delete)">
                                                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                     </svg>

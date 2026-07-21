@@ -95,8 +95,8 @@ const printReport = () => {
             <div class="flex justify-between items-start mb-6 print:mb-4 px-4 print:px-0">
                 <!-- Ministry -->
                 <div class="text-center font-content text-sm leading-relaxed pt-9">
-                    <p>មន្ទីរអប់រំ យុវជន និងកីឡា រាជធានី/ខេត្ត</p>
-                    <p class="mt-0.5 font-bold">{{ school?.name || 'វិទ្យាល័យជាស៊ីមសន្ធរម៉ុក' }}</p>
+                    <p>មន្ទីរអប់រំ យុវជន និងកីឡា {{ school?.province || 'រាជធានី/ខេត្ត' }}</p>
+                    <p class="mt-0.5 font-bold">{{ school?.name || 'ឈ្មោះសាលា' }}</p>
                 </div>
                 
                 <!-- Kingdom -->
@@ -168,7 +168,7 @@ const printReport = () => {
                     <p class="font-bold font-moul text-sm mb-24">នាយកសាលា</p>
                 </div>
                 <div class="text-center">
-                    <p class="text-sm mb-2 text-gray-800">ធ្វើនៅ...........................ថ្ងៃទី...........ខែ...........ឆ្នាំ...........</p>
+                    <p class="text-sm mb-2 text-gray-800">ធ្វើនៅ {{ school?.province || '...........................' }}, ថ្ងៃទី...........ខែ...........ឆ្នាំ...........</p>
                     <p class="font-bold text-sm mb-24 text-gray-800">អ្នករៀបចំរបាយការណ៍</p>
                 </div>
             </div>

@@ -177,7 +177,7 @@ const getTeacherName = (slot) => {
                     <p class="font-bold">នាយកសាលា</p>
                 </div>
                 <div class="text-center">
-                    <p class="text-sm mb-2">ធ្វើនៅ...................ថ្ងៃទី.......ខែ.........ឆ្នាំ..........</p>
+                    <p class="text-sm mb-2">ធ្វើនៅ {{ school?.province || '...................' }}, ថ្ងៃទី.......ខែ.........ឆ្នាំ..........</p>
                     <p class="font-bold text-sm mb-16">អ្នករៀបចំកាលវិភាគ</p>
                 </div>
             </div>

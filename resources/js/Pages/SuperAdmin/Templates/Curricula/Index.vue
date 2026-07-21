@@ -1,7 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import Modal from '@/Components/Modal.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
@@ -140,6 +140,48 @@ const getCurriculumTotalHours = (curriculum) => {
     if (!curriculum.subjects) return 0;
     return curriculum.subjects.reduce((sum, subject) => sum + (Number(subject.pivot?.weekly_hours) || 0), 0);
 };
+
+const localCurricula = ref([...props.curricula.data]);
+
+watch(() => props.curricula.data, (newVal) => {
+    localCurricula.value = [...newVal];
+}, { deep: true });
+
+let draggedIndex = null;
+
+const onDragStart = (index, event) => {
+    draggedIndex = index;
+    if (event.dataTransfer) {
+        event.dataTransfer.effectAllowed = 'move';
+        event.dataTransfer.setData('text/plain', index);
+    }
+};
+
+const onDrop = (index) => {
+    if (draggedIndex === null || draggedIndex === index) return;
+    
+    // Move item
+    const movedItem = localCurricula.value.splice(draggedIndex, 1)[0];
+    localCurricula.value.splice(index, 0, movedItem);
+    
+    // Re-assign sort_order
+    localCurricula.value.forEach((curr, i) => {
+        curr.sort_order = i + 1;
+    });
+    
+    // Send request to backend
+    const curriculaData = localCurricula.value.map(c => ({
+        id: c.id,
+        sort_order: c.sort_order
+    }));
+    
+    router.post(route('admin.template-curricula.reorder'), { curricula: curriculaData }, {
+        preserveScroll: true,
+        preserveState: true,
+    });
+    
+    draggedIndex = null;
+};
 </script>
 
 <template>
@@ -192,8 +234,17 @@ const getCurriculumTotalHours = (curriculum) => {
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
-                                    <tr v-for="(curriculum, index) in curricula.data" :key="curriculum.id" class="hover:bg-gray-50">
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <tr v-for="(curriculum, index) in localCurricula" :key="curriculum.id" 
+                                        class="hover:bg-gray-50 cursor-move"
+                                        draggable="true"
+                                        @dragstart="onDragStart(index, $event)"
+                                        @dragover.prevent
+                                        @dragenter.prevent
+                                        @drop="onDrop(index)">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 flex items-center gap-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 text-gray-400 cursor-move shrink-0">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9h16.5m-16.5 6.75h16.5" />
+                                            </svg>
                                             {{ curricula.from ? curricula.from + index : index + 1 }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">

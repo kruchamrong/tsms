@@ -28,6 +28,10 @@ class TimetableSlotController extends Controller
     {
         $result = $this->timetableService->toggleSlot($request->validated());
 
+        if ($request->wantsJson()) {
+            return response()->json($result);
+        }
+
         if (isset($result['type'])) {
             return redirect()->back()->with($result['type'], $result['message']);
         }

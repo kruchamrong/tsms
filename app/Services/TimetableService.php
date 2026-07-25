@@ -327,7 +327,7 @@ class TimetableService
                 return ['type' => 'success', 'message' => 'បានផ្លាស់ប្តូរគ្រូបង្រៀនដោយជោគជ័យ។'];
             }
 
-            TimetableSlot::create([
+            $newSlot = TimetableSlot::create([
                 'id' => (string) Str::uuid(),
                 'teaching_assignment_id' => $validAssignment->id,
                 'period_id' => $periodId,
@@ -336,7 +336,7 @@ class TimetableService
                 'status' => 'Scheduled',
             ]);
 
-            return ['type' => 'success', 'message' => 'បានបន្ថែមម៉ោងបង្រៀនដោយជោគជ័យ។'];
+            return ['type' => 'success', 'message' => 'បានបន្ថែមម៉ោងបង្រៀនដោយជោគជ័យ។', 'slot_id' => $newSlot->id];
         });
     }
 

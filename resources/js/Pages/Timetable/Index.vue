@@ -199,9 +199,10 @@ const toggleSlot = (classId, dayId, periodId) => {
         const tAssignments = (props.assignments || []).filter(a => a.teacher_id == toggleForm.teacher_id);
         let validAssignment = tAssignments.find(a => a.subject_id == toggleForm.subject_id && a.school_class_id == classId) || tAssignments.find(a => a.school_class_id == classId);
         
+        const tempId = 'temp-' + Date.now();
         if (validAssignment) {
             localSlots.value.push({
-                id: 'temp-' + Date.now(),
+                id: tempId,
                 day_of_week: dayId,
                 period_id: periodId,
                 teaching_assignment_id: validAssignment.id,
@@ -216,14 +217,27 @@ const toggleSlot = (classId, dayId, periodId) => {
         
         activeParkedSlot.value = null;
         
-        axios.post(route('timetables.slots.toggle'), toggleForm).then(res => {
+        const payload = {
+            teacher_id: toggleForm.teacher_id,
+            school_class_id: toggleForm.school_class_id,
+            day_of_week: toggleForm.day_of_week,
+            period_id: toggleForm.period_id,
+            subject_id: toggleForm.subject_id,
+        };
+        
+        axios.post(route('timetables.slots.toggle'), payload, {
+            headers: { 'Accept': 'application/json' }
+        }).then(res => {
             if (res.data && res.data.type === 'error') {
                 localSlots.value = originalSlots;
                 toastMessage.value = res.data.message;
                 toastType.value = 'error';
                 showToast();
-            } else {
-                router.reload({ only: ['slots', 'classStats', 'teacherWorkloads', 'classAssignmentsDetail', 'flash'], preserveScroll: true, preserveState: true });
+            } else if (res.data && res.data.slot_id) {
+                const tempSlot = localSlots.value.find(s => s.id === tempId);
+                if (tempSlot) {
+                    tempSlot.id = res.data.slot_id;
+                }
             }
         }).catch(err => {
             localSlots.value = originalSlots;
@@ -259,14 +273,20 @@ const toggleSlot = (classId, dayId, periodId) => {
     toggleForm.subject_id = selectedSubjectId.value;
     
     let originalSlots = [...localSlots.value];
+    const tempId = 'temp-' + Date.now();
     
-    if (!slot) {
+    if (!slot || slot.teaching_assignment.teacher_id != filterForm.teacher_id) {
+        // ADD OR OVERWRITE
         const tAssignments = (props.assignments || []).filter(a => a.teacher_id == toggleForm.teacher_id);
         let validAssignment = tAssignments.find(a => a.subject_id == toggleForm.subject_id && a.school_class_id == classId) || tAssignments.find(a => a.school_class_id == classId);
         
         if (validAssignment) {
+            if (slot) {
+                // Optimistically remove the old slot from UI before pushing the new one
+                localSlots.value = localSlots.value.filter(s => s.id !== slot.id);
+            }
             localSlots.value.push({
-                id: 'temp-' + Date.now(),
+                id: tempId,
                 day_of_week: dayId,
                 period_id: periodId,
                 teaching_assignment_id: validAssignment.id,
@@ -279,22 +299,36 @@ const toggleSlot = (classId, dayId, periodId) => {
             });
         }
     } else {
+        // DELETE
         localSlots.value = localSlots.value.filter(s => s.id !== slot.id);
     }
     
-    axios.post(route('timetables.slots.toggle'), toggleForm).then(res => {
-        // If the server didn't throw a 500, check if we manually returned an error JSON
+    const payload = {
+        teacher_id: toggleForm.teacher_id,
+        school_class_id: toggleForm.school_class_id,
+        day_of_week: toggleForm.day_of_week,
+        period_id: toggleForm.period_id,
+        subject_id: toggleForm.subject_id,
+    };
+    
+    axios.post(route('timetables.slots.toggle'), payload, {
+        headers: { 'Accept': 'application/json' }
+    }).then(res => {
         if (res.data && res.data.type === 'error') {
             localSlots.value = originalSlots;
             toastMessage.value = res.data.message;
             toastType.value = 'error';
             showToast();
-        } else {
-            router.reload({ only: ['slots', 'classStats', 'teacherWorkloads', 'classAssignmentsDetail', 'flash'], preserveScroll: true, preserveState: true });
+        } else if (res.data && res.data.slot_id) {
+            const tempSlot = localSlots.value.find(s => s.id === tempId);
+            if (tempSlot) {
+                tempSlot.id = res.data.slot_id;
+            }
         }
     }).catch(err => {
         localSlots.value = originalSlots;
-        toastMessage.value = 'មានបញ្ហាក្នុងការភ្ជាប់ទៅកាន់ Server!';
+        const msg = err.response && err.response.data && err.response.data.message ? err.response.data.message : 'មានបញ្ហាក្នុងការភ្ជាប់ទៅកាន់ Server!';
+        toastMessage.value = msg;
         toastType.value = 'error';
         showToast();
     });

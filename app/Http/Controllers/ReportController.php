@@ -67,7 +67,8 @@ class ReportController extends Controller
 
         $classes = SchoolClass::where('school_id', $schoolId)
             ->with('curriculum.subjects')
-            ->orderByRaw('CAST(class_code AS UNSIGNED) DESC, class_code ASC')
+            ->orderBy('grade_id', 'desc')
+            ->orderBy('class_code', 'asc')
             ->get();
         
         $assignments = DB::table('teaching_assignments')

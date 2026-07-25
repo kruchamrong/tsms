@@ -190,7 +190,7 @@ const getTotalHours = (schoolClass) => {
                             <td v-for="day in daysOfWeek" :key="day.id" class="border border-gray-800 p-1 font-bold text-blue-800 text-xs">
                                 <template v-if="getSlotInfo(schoolClass, period.id, day.id)">
                                     <div class="text-gray-900 font-bold text-sm leading-tight">{{ getSlotInfo(schoolClass, period.id, day.id).subjectName }}</div>
-                                    <div class="font-normal text-gray-700 mt-0.5">{{ getSlotInfo(schoolClass, period.id, day.id).subjectShortName }}</div>
+                                    <div class="font-normal text-gray-700 mt-0.5">{{ getSlotInfo(schoolClass, period.id, day.id).teacherName }}</div>
                                 </template>
                             </td>
                         </tr>
@@ -226,7 +226,7 @@ const getTotalHours = (schoolClass) => {
                             <td v-for="day in daysOfWeek" :key="day.id" class="border border-gray-800 p-1 font-bold text-blue-800 text-xs">
                                 <template v-if="getSlotInfo(schoolClass, period.id, day.id)">
                                     <div class="text-gray-900 font-bold text-sm leading-tight">{{ getSlotInfo(schoolClass, period.id, day.id).subjectName }}</div>
-                                    <div class="font-normal text-gray-700 mt-0.5">{{ getSlotInfo(schoolClass, period.id, day.id).subjectShortName }}</div>
+                                    <div class="font-normal text-gray-700 mt-0.5">{{ getSlotInfo(schoolClass, period.id, day.id).teacherName }}</div>
                                 </template>
                             </td>
                         </tr>

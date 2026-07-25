@@ -79,37 +79,12 @@ const updateFilters = () => {
     router.get(route('teaching-assignments.index'), { 
         teacher_id: form.teacher_id || '', 
         subject_id: form.subject_id || '',
-        grade_id: searchForm.grade_id,
-        shift_id: searchForm.shift_id,
     }, { preserveState: true, preserveScroll: true });
 };
 
 const onLeftPanelChange = () => {
-    // Clear right panel filters so they don't hide data when changing teacher/subject
-    if (searchForm.grade_id || searchForm.shift_id) {
-        searchForm.grade_id = '';
-        searchForm.shift_id = '';
-    } else {
-        updateFilters();
-    }
+    updateFilters();
 };
-
-const searchForm = useForm({
-    grade_id: props.filters.grade_id || '',
-    shift_id: props.filters.shift_id || '',
-});
-
-let timeoutId = null;
-const applyFilters = () => {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => {
-        updateFilters();
-    }, 300);
-};
-
-watch(() => [searchForm.grade_id, searchForm.shift_id], () => {
-    applyFilters();
-});
 
 const onDragStart = (event, assignmentId) => {
     event.dataTransfer.setData('assignmentId', assignmentId);
@@ -336,14 +311,6 @@ const quickAssign = (subjectId) => {
                                 </template>
                             </h3>
                             <div class="flex items-center gap-3 w-full lg:w-auto flex-wrap">
-                                <select v-model="searchForm.grade_id" class="border-gray-300 rounded-md text-sm focus:ring-indigo-500 shadow-sm">
-                                    <option value="">គ្រប់កម្រិត</option>
-                                    <option v-for="grade in grades" :key="grade.id" :value="grade.id">{{ grade.name }}</option>
-                                </select>
-                                <select v-model="searchForm.shift_id" class="border-gray-300 rounded-md text-sm focus:ring-indigo-500 shadow-sm">
-                                    <option value="">គ្រប់វេន</option>
-                                    <option v-for="shift in shifts" :key="shift.id" :value="shift.id">{{ shift.name }}</option>
-                                </select>
                                 <div class="w-40 relative z-40">
                                     <SearchableSelect 
                                         v-model="checkClassId" 

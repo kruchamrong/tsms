@@ -26,6 +26,28 @@ Route::get('/setup-database-xyz', function () {
     }
 });
 
+Route::get('/fix-audits-db', function () {
+    try {
+        \Illuminate\Support\Facades\Schema::table('audits', function (\Illuminate\Database\Schema\Blueprint $table) {
+            $table->dropIndex('audits_auditable_type_auditable_id_index');
+        });
+    } catch (\Exception $e) {}
+
+    try {
+        \Illuminate\Support\Facades\DB::statement('ALTER TABLE audits ALTER COLUMN auditable_id TYPE VARCHAR(36) USING auditable_id::VARCHAR');
+        
+        try {
+            \Illuminate\Support\Facades\Schema::table('audits', function (\Illuminate\Database\Schema\Blueprint $table) {
+                $table->index(['auditable_type', 'auditable_id'], 'audits_auditable_type_auditable_id_index');
+            });
+        } catch (\Exception $e) {}
+        
+        return 'Successfully changed auditable_id column to string!';
+    } catch (\Exception $e) {
+        return 'Error changing column: ' . $e->getMessage();
+    }
+});
+
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),

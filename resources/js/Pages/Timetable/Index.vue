@@ -262,8 +262,39 @@ const toggleSlot = (classId, dayId, periodId) => {
         return;
     }
 
-    if (!slot && isClassSubjectFulfilled(classId)) {
-        return;
+    const isOverwrite = slot && slot.teaching_assignment.teacher_id != filterForm.teacher_id;
+    
+    let validAssignment = null;
+    if (!slot || isOverwrite) {
+        const tAssignments = (props.assignments || []).filter(a => a.teacher_id == filterForm.teacher_id && a.school_class_id == classId);
+        for (const a of tAssignments) {
+            if (selectedSubjectId.value && a.subject_id != selectedSubjectId.value) continue;
+            
+            // Check weekly limit
+            const assignedCount = localSlots.value.filter(s => s.teaching_assignment_id === a.id).length;
+            if (assignedCount >= a.weekly_hours) continue;
+            
+            // Check 2-hour shift limit (ignoring the slot being overwritten if it was somehow the same assignment, which is impossible since it's a different teacher)
+            const isMorning = periodId <= 4;
+            const hoursInShift = localSlots.value.filter(s => 
+                s.id !== (slot ? slot.id : null) && // Exclude the overwritten slot
+                s.teaching_assignment_id === a.id && 
+                s.day_of_week === dayId && 
+                ((isMorning && s.period_id <= 4) || (!isMorning && s.period_id > 4))
+            ).length;
+            
+            if (hoursInShift >= 2) continue;
+            
+            validAssignment = a;
+            break;
+        }
+        
+        if (!validAssignment) {
+            toastMessage.value = 'មិនអាចបញ្ចូលបានទេ! មុខវិជ្ជាសរុបបានបង្រៀនគ្រប់ម៉ោង ឬបានបង្រៀន ២ម៉ោង ពេញរួចហើយ។';
+            toastType.value = 'error';
+            showToast();
+            return;
+        }
     }
     
     toggleForm.teacher_id = filterForm.teacher_id;
@@ -275,29 +306,24 @@ const toggleSlot = (classId, dayId, periodId) => {
     let originalSlots = [...localSlots.value];
     const tempId = 'temp-' + Date.now();
     
-    if (!slot || slot.teaching_assignment.teacher_id != filterForm.teacher_id) {
+    if (!slot || isOverwrite) {
         // ADD OR OVERWRITE
-        const tAssignments = (props.assignments || []).filter(a => a.teacher_id == toggleForm.teacher_id);
-        let validAssignment = tAssignments.find(a => a.subject_id == toggleForm.subject_id && a.school_class_id == classId) || tAssignments.find(a => a.school_class_id == classId);
-        
-        if (validAssignment) {
-            if (slot) {
-                // Optimistically remove the old slot from UI before pushing the new one
-                localSlots.value = localSlots.value.filter(s => s.id !== slot.id);
-            }
-            localSlots.value.push({
-                id: tempId,
-                day_of_week: dayId,
-                period_id: periodId,
-                teaching_assignment_id: validAssignment.id,
-                teaching_assignment: {
-                    ...validAssignment,
-                    subject: props.subjects.find(s => s.id === validAssignment.subject_id) || validAssignment.subject,
-                    teacher: props.teachers.find(t => t.id === validAssignment.teacher_id) || validAssignment.teacher,
-                    school_class: props.classes.find(c => c.id === validAssignment.school_class_id) || validAssignment.school_class
-                }
-            });
+        if (slot) {
+            // Optimistically remove the old slot from UI before pushing the new one
+            localSlots.value = localSlots.value.filter(s => s.id !== slot.id);
         }
+        localSlots.value.push({
+            id: tempId,
+            day_of_week: dayId,
+            period_id: periodId,
+            teaching_assignment_id: validAssignment.id,
+            teaching_assignment: {
+                ...validAssignment,
+                subject: props.subjects.find(s => s.id === validAssignment.subject_id) || validAssignment.subject,
+                teacher: props.teachers.find(t => t.id === validAssignment.teacher_id) || validAssignment.teacher,
+                school_class: props.classes.find(c => c.id === validAssignment.school_class_id) || validAssignment.school_class
+            }
+        });
     } else {
         // DELETE
         localSlots.value = localSlots.value.filter(s => s.id !== slot.id);

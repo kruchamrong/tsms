@@ -720,9 +720,7 @@ const getCellClass = (slot, dayId, periodId, classId) => {
                     <!-- Bottom Row: Teacher stats directly inline, flex-grow -->
                     <div v-if="filterForm.teacher_id" class="flex-grow bg-gray-50 px-2.5 py-1.5 rounded border border-gray-200 overflow-x-auto flex items-center gap-3 whitespace-nowrap">
                         <div class="text-[11px] text-gray-700 font-bold shrink-0">ម៉ោងបង្រៀន:</div>
-                        <div v-if="teacherStatsGrouped.groups.length > 0" class="text-[11px] font-bold bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded shadow-sm border border-blue-200 shrink-0">
-                            {{ teacherStatsGrouped.grandTotalAssigned }}/{{ teacherStatsGrouped.grandTotalRequired }}
-                        </div>
+
                         <div v-if="teacherStatsGrouped.groups.length > 0" class="flex items-center gap-3 py-0.5">
                             <div v-for="group in teacherStatsGrouped.groups" :key="group.subjectKey" 
                                  @click="selectedSubjectId = group.subjectId"

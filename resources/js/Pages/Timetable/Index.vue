@@ -27,11 +27,9 @@ const toggleFullScreen = () => {
     isFullScreen.value = !isFullScreen.value;
 };
 
-const localSlots = ref(Array.isArray(props.slots) ? [...props.slots] : Object.values(props.slots || {}));
-
-watch(() => props.slots, (newSlots) => {
-    localSlots.value = Array.isArray(newSlots) ? [...newSlots] : Object.values(newSlots || {});
-}, { deep: true });
+const slotsArray = computed(() => {
+    return Array.isArray(props.slots) ? props.slots : Object.values(props.slots || {});
+});
 
 const showAllPeriods = ref(false);
 const filteredPeriods = computed(() => {
@@ -175,8 +173,7 @@ const toggleSlot = (classId, dayId, periodId) => {
             return;
         }
         
-        const slotsArray = localSlots.value;
-        const isBusy = slotsArray.some(s => 
+        const isBusy = slotsArray.value.some(s => 
             s.day_of_week === dayId && 
             s.period_id === periodId && 
             s.teaching_assignment && s.teaching_assignment.teacher_id == activeParkedSlot.value.teacherId
@@ -195,55 +192,8 @@ const toggleSlot = (classId, dayId, periodId) => {
         toggleForm.period_id = periodId;
         toggleForm.subject_id = activeParkedSlot.value.subjectId;
         
-        let originalSlots = [...localSlots.value];
-        const tAssignments = (props.assignments || []).filter(a => a.teacher_id == toggleForm.teacher_id);
-        let validAssignment = tAssignments.find(a => a.subject_id == toggleForm.subject_id && a.school_class_id == classId) || tAssignments.find(a => a.school_class_id == classId);
-        
-        const tempId = 'temp-' + Date.now();
-        if (validAssignment) {
-            localSlots.value.push({
-                id: tempId,
-                day_of_week: dayId,
-                period_id: periodId,
-                teaching_assignment_id: validAssignment.id,
-                teaching_assignment: {
-                    ...validAssignment,
-                    subject: props.subjects.find(s => s.id === validAssignment.subject_id) || validAssignment.subject,
-                    teacher: props.teachers.find(t => t.id === validAssignment.teacher_id) || validAssignment.teacher,
-                    school_class: props.classes.find(c => c.id === validAssignment.school_class_id) || validAssignment.school_class
-                }
-            });
-        }
-        
-        activeParkedSlot.value = null;
-        
-        const payload = {
-            teacher_id: toggleForm.teacher_id,
-            school_class_id: toggleForm.school_class_id,
-            day_of_week: toggleForm.day_of_week,
-            period_id: toggleForm.period_id,
-            subject_id: toggleForm.subject_id,
-        };
-        
-        axios.post(route('timetables.slots.toggle'), payload, {
-            headers: { 'Accept': 'application/json' }
-        }).then(res => {
-            if (res.data && res.data.type === 'error') {
-                localSlots.value = originalSlots;
-                toastMessage.value = res.data.message;
-                toastType.value = 'error';
-                showToast();
-            } else if (res.data && res.data.slot_id) {
-                const tempSlot = localSlots.value.find(s => s.id === tempId);
-                if (tempSlot) {
-                    tempSlot.id = res.data.slot_id;
-                }
-            }
-        }).catch(err => {
-            localSlots.value = originalSlots;
-            toastMessage.value = 'មានបញ្ហាក្នុងការភ្ជាប់ទៅកាន់ Server!';
-            toastType.value = 'error';
-            showToast();
+        toggleForm.post(route('timetables.slots.toggle'), {
+            preserveScroll: true
         });
         return;
     }
@@ -262,39 +212,8 @@ const toggleSlot = (classId, dayId, periodId) => {
         return;
     }
 
-    const isOverwrite = slot && slot.teaching_assignment.teacher_id != filterForm.teacher_id;
-    
-    let validAssignment = null;
-    if (!slot || isOverwrite) {
-        const tAssignments = (props.assignments || []).filter(a => a.teacher_id == filterForm.teacher_id && a.school_class_id == classId);
-        for (const a of tAssignments) {
-            if (selectedSubjectId.value && a.subject_id != selectedSubjectId.value) continue;
-            
-            // Check weekly limit
-            const assignedCount = localSlots.value.filter(s => s.teaching_assignment_id === a.id).length;
-            if (assignedCount >= a.weekly_hours) continue;
-            
-            // Check 2-hour shift limit (ignoring the slot being overwritten if it was somehow the same assignment, which is impossible since it's a different teacher)
-            const isMorning = periodId <= 4;
-            const hoursInShift = localSlots.value.filter(s => 
-                s.id !== (slot ? slot.id : null) && // Exclude the overwritten slot
-                s.teaching_assignment_id === a.id && 
-                s.day_of_week === dayId && 
-                ((isMorning && s.period_id <= 4) || (!isMorning && s.period_id > 4))
-            ).length;
-            
-            if (hoursInShift >= 2) continue;
-            
-            validAssignment = a;
-            break;
-        }
-        
-        if (!validAssignment) {
-            toastMessage.value = 'មិនអាចបញ្ចូលបានទេ! មុខវិជ្ជាសរុបបានបង្រៀនគ្រប់ម៉ោង ឬបានបង្រៀន ២ម៉ោង ពេញរួចហើយ។';
-            toastType.value = 'error';
-            showToast();
-            return;
-        }
+    if (!slot && isClassSubjectFulfilled(classId)) {
+        return;
     }
     
     toggleForm.teacher_id = filterForm.teacher_id;
@@ -303,60 +222,8 @@ const toggleSlot = (classId, dayId, periodId) => {
     toggleForm.period_id = periodId;
     toggleForm.subject_id = selectedSubjectId.value;
     
-    let originalSlots = [...localSlots.value];
-    const tempId = 'temp-' + Date.now();
-    
-    if (!slot || isOverwrite) {
-        // ADD OR OVERWRITE
-        if (slot) {
-            // Optimistically remove the old slot from UI before pushing the new one
-            localSlots.value = localSlots.value.filter(s => s.id !== slot.id);
-        }
-        localSlots.value.push({
-            id: tempId,
-            day_of_week: dayId,
-            period_id: periodId,
-            teaching_assignment_id: validAssignment.id,
-            teaching_assignment: {
-                ...validAssignment,
-                subject: props.subjects.find(s => s.id === validAssignment.subject_id) || validAssignment.subject,
-                teacher: props.teachers.find(t => t.id === validAssignment.teacher_id) || validAssignment.teacher,
-                school_class: props.classes.find(c => c.id === validAssignment.school_class_id) || validAssignment.school_class
-            }
-        });
-    } else {
-        // DELETE
-        localSlots.value = localSlots.value.filter(s => s.id !== slot.id);
-    }
-    
-    const payload = {
-        teacher_id: toggleForm.teacher_id,
-        school_class_id: toggleForm.school_class_id,
-        day_of_week: toggleForm.day_of_week,
-        period_id: toggleForm.period_id,
-        subject_id: toggleForm.subject_id,
-    };
-    
-    axios.post(route('timetables.slots.toggle'), payload, {
-        headers: { 'Accept': 'application/json' }
-    }).then(res => {
-        if (res.data && res.data.type === 'error') {
-            localSlots.value = originalSlots;
-            toastMessage.value = res.data.message;
-            toastType.value = 'error';
-            showToast();
-        } else if (res.data && res.data.slot_id) {
-            const tempSlot = localSlots.value.find(s => s.id === tempId);
-            if (tempSlot) {
-                tempSlot.id = res.data.slot_id;
-            }
-        }
-    }).catch(err => {
-        localSlots.value = originalSlots;
-        const msg = err.response && err.response.data && err.response.data.message ? err.response.data.message : 'មានបញ្ហាក្នុងការភ្ជាប់ទៅកាន់ Server!';
-        toastMessage.value = msg;
-        toastType.value = 'error';
-        showToast();
+    toggleForm.post(route('timetables.slots.toggle'), {
+        preserveScroll: true
     });
 };
 
@@ -370,8 +237,7 @@ const gridData = computed(() => {
         });
     });
 
-    const slotsArray = localSlots.value;
-    slotsArray.forEach(slot => {
+    slotsArray.value.forEach(slot => {
         if (grid[slot.day_of_week] && grid[slot.day_of_week][slot.period_id]) {
             grid[slot.day_of_week][slot.period_id][slot.teaching_assignment.school_class_id] = slot;
         }
@@ -419,8 +285,7 @@ const teacherStatsGrouped = computed(() => {
     let grouped = {};
     
     tAssignments.forEach(a => {
-        // Count how many slots are using this assignment dynamically from localSlots
-        const assignedCount = localSlots.value.filter(s => s.teaching_assignment_id === a.id).length;
+        const assignedCount = slotsArray.value.filter(s => s.teaching_assignment_id === a.id).length;
         
         grandTotalAssigned += assignedCount;
         grandTotalRequired += a.weekly_hours;
@@ -484,7 +349,7 @@ const teacherStatsGrouped = computed(() => {
 const localClassStats = computed(() => {
     let stats = JSON.parse(JSON.stringify(props.classStats || {}));
     for (const classId in stats) {
-        stats[classId].assigned = localSlots.value.filter(s => s.teaching_assignment && s.teaching_assignment.school_class_id == classId).length;
+        stats[classId].assigned = slotsArray.value.filter(s => s.teaching_assignment && s.teaching_assignment.school_class_id == classId).length;
     }
     return stats;
 });
@@ -501,7 +366,7 @@ const parkedSlots = computed(() => {
                 return; // Filter by teacher if selected
             }
             
-            const currentAssigned = localSlots.value.filter(s => s.teaching_assignment_id === a.id).length;
+            const currentAssigned = slotsArray.value.filter(s => s.teaching_assignment_id === a.id).length;
             
             if (currentAssigned < a.weekly_hours) {
                 for (let i = 0; i < (a.weekly_hours - currentAssigned); i++) {

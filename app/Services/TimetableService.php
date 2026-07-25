@@ -12,40 +12,65 @@ use App\Models\TeacherAvailability;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class TimetableService
 {
     public function getTimetableData(Request $request)
     {
-        $shifts = Shift::all();
+        $shifts = Cache::remember('timetable_shifts', 300, fn() => Shift::all());
         $shiftId = $request->query('shift_id', $shifts->first()->id ?? 1);
         $teacherId = $request->query('teacher_id');
         $levelId = $request->query('level_id');
 
-        $classesQuery = SchoolClass::with('curriculum.subjects');
+        $cacheKey = "timetable_base_data_{$shiftId}_{$teacherId}_{$levelId}";
+        $baseData = Cache::remember($cacheKey, 300, function () use ($shiftId, $teacherId, $levelId) {
+            $classesQuery = SchoolClass::with('curriculum.subjects');
 
-        if ($levelId === 'lower') {
-            $classesQuery->whereIn('grade_id', [1, 2, 3]); // Grades 7-9
-        } elseif ($levelId === 'upper') {
-            $classesQuery->whereIn('grade_id', [4, 5, 6]); // Grades 10-12
-        }
-
-        if ($teacherId) {
-            $classesQuery->whereHas('teachingAssignments', function($q) use ($teacherId) {
-                $q->where('teacher_id', $teacherId);
-            });
-        } else {
-            if ($shiftId !== 'all') {
-                $classesQuery->where('shift_id', $shiftId);
+            if ($levelId === 'lower') {
+                $classesQuery->whereIn('grade_id', [1, 2, 3]); // Grades 7-9
+            } elseif ($levelId === 'upper') {
+                $classesQuery->whereIn('grade_id', [4, 5, 6]); // Grades 10-12
             }
-        }
 
-        $classes = $classesQuery->orderBy('grade_id')
-            ->orderBy('class_code')
-            ->get();
+            if ($teacherId) {
+                $classesQuery->whereHas('teachingAssignments', function($q) use ($teacherId) {
+                    $q->where('teacher_id', $teacherId);
+                });
+            } else {
+                if ($shiftId !== 'all') {
+                    $classesQuery->where('shift_id', $shiftId);
+                }
+            }
+
+            $classes = $classesQuery->orderBy('grade_id')
+                ->orderBy('class_code')
+                ->get();
+                
+            $periods = Period::orderBy('start_time')->get();
+            $classIds = $classes->pluck('id');
+
+            $assignmentsQuery = TeachingAssignment::with(['subject', 'schoolClass', 'teacher']);
+            $assignmentsQuery->where(function($q) use ($classIds, $teacherId) {
+                $q->whereIn('school_class_id', $classIds);
+                if ($teacherId) {
+                    $q->orWhere('teacher_id', $teacherId);
+                }
+            });
+            $assignments = $assignmentsQuery->get();
+
+            $allTeachers = Teacher::with('teachingAssignments.subject')->orderBy('khmer_name')->get();
+            $subjects = \App\Models\Subject::all();
             
-        $periods = Period::orderBy('start_time')->get();
-        $classIds = $classes->pluck('id');
+            return compact('classes', 'classIds', 'periods', 'assignments', 'allTeachers', 'subjects');
+        });
+
+        $classes = $baseData['classes'];
+        $classIds = $baseData['classIds'];
+        $periods = $baseData['periods'];
+        $assignments = $baseData['assignments'];
+        $allTeachers = $baseData['allTeachers'];
+        $subjects = $baseData['subjects'];
 
         $slotsQuery = TimetableSlot::with(['teachingAssignment.subject', 'teachingAssignment.teacher', 'room']);
         $slotsQuery->whereHas('teachingAssignment', function($q) use ($classIds, $teacherId) {
@@ -55,15 +80,6 @@ class TimetableService
             }
         });
         $slots = $slotsQuery->get();
-
-        $assignmentsQuery = TeachingAssignment::with(['subject', 'schoolClass', 'teacher']);
-        $assignmentsQuery->where(function($q) use ($classIds, $teacherId) {
-            $q->whereIn('school_class_id', $classIds);
-            if ($teacherId) {
-                $q->orWhere('teacher_id', $teacherId);
-            }
-        });
-        $assignments = $assignmentsQuery->get();
 
         $assignmentsIds = $assignments->pluck('id');
         $assignmentsSlotsCount = TimetableSlot::whereIn('teaching_assignment_id', $assignmentsIds)
@@ -75,7 +91,6 @@ class TimetableService
             $assignment->assigned_hours = $assignmentsSlotsCount->get($assignment->id, 0);
         });
 
-        $allTeachers = Teacher::with('teachingAssignments.subject')->orderBy('khmer_name')->get();
         $subjectCounters = [];
         $teacherSubjectCodes = [];
 
@@ -179,7 +194,7 @@ class TimetableService
 
         return [
             'shifts' => $shifts,
-            'subjects' => \App\Models\Subject::all(),
+            'subjects' => $subjects,
             'classes' => $classes,
             'periods' => $periods,
             'teachers' => $allTeachers,

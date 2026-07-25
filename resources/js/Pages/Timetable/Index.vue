@@ -2,6 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, useForm, router, usePage } from '@inertiajs/vue3';
 import { ref, computed, watch } from 'vue';
+import axios from 'axios';
 import SearchableSelect from '@/Components/SearchableSelect.vue';
 import Modal from '@/Components/Modal.vue';
 
@@ -25,6 +26,12 @@ const isFullScreen = ref(false);
 const toggleFullScreen = () => {
     isFullScreen.value = !isFullScreen.value;
 };
+
+const localSlots = ref(Array.isArray(props.slots) ? [...props.slots] : Object.values(props.slots || {}));
+
+watch(() => props.slots, (newSlots) => {
+    localSlots.value = Array.isArray(newSlots) ? [...newSlots] : Object.values(newSlots || {});
+}, { deep: true });
 
 const showAllPeriods = ref(false);
 const filteredPeriods = computed(() => {
@@ -168,11 +175,11 @@ const toggleSlot = (classId, dayId, periodId) => {
             return;
         }
         
-        const slotsArray = Array.isArray(props.slots) ? props.slots : Object.values(props.slots || {});
+        const slotsArray = localSlots.value;
         const isBusy = slotsArray.some(s => 
             s.day_of_week === dayId && 
             s.period_id === periodId && 
-            s.teaching_assignment.teacher_id == activeParkedSlot.value.teacherId
+            s.teaching_assignment && s.teaching_assignment.teacher_id == activeParkedSlot.value.teacherId
         );
         
         if (isBusy) {
@@ -188,11 +195,41 @@ const toggleSlot = (classId, dayId, periodId) => {
         toggleForm.period_id = periodId;
         toggleForm.subject_id = activeParkedSlot.value.subjectId;
         
-        toggleForm.post(route('timetables.slots.toggle'), {
-            preserveScroll: true,
-            onSuccess: (page) => {
-                activeParkedSlot.value = null;
+        let originalSlots = [...localSlots.value];
+        const tAssignments = (props.assignments || []).filter(a => a.teacher_id == toggleForm.teacher_id);
+        let validAssignment = tAssignments.find(a => a.subject_id == toggleForm.subject_id && a.school_class_id == classId) || tAssignments.find(a => a.school_class_id == classId);
+        
+        if (validAssignment) {
+            localSlots.value.push({
+                id: 'temp-' + Date.now(),
+                day_of_week: dayId,
+                period_id: periodId,
+                teaching_assignment_id: validAssignment.id,
+                teaching_assignment: {
+                    ...validAssignment,
+                    subject: props.subjects.find(s => s.id === validAssignment.subject_id) || validAssignment.subject,
+                    teacher: props.teachers.find(t => t.id === validAssignment.teacher_id) || validAssignment.teacher,
+                    school_class: props.classes.find(c => c.id === validAssignment.school_class_id) || validAssignment.school_class
+                }
+            });
+        }
+        
+        activeParkedSlot.value = null;
+        
+        axios.post(route('timetables.slots.toggle'), toggleForm).then(res => {
+            if (res.data && res.data.type === 'error') {
+                localSlots.value = originalSlots;
+                toastMessage.value = res.data.message;
+                toastType.value = 'error';
+                showToast();
+            } else {
+                router.reload({ only: ['slots', 'classStats', 'teacherWorkloads', 'classAssignmentsDetail', 'flash'], preserveScroll: true, preserveState: true });
             }
+        }).catch(err => {
+            localSlots.value = originalSlots;
+            toastMessage.value = 'មានបញ្ហាក្នុងការភ្ជាប់ទៅកាន់ Server!';
+            toastType.value = 'error';
+            showToast();
         });
         return;
     }
@@ -221,8 +258,45 @@ const toggleSlot = (classId, dayId, periodId) => {
     toggleForm.period_id = periodId;
     toggleForm.subject_id = selectedSubjectId.value;
     
-    toggleForm.post(route('timetables.slots.toggle'), {
-        preserveScroll: true
+    let originalSlots = [...localSlots.value];
+    
+    if (!slot) {
+        const tAssignments = (props.assignments || []).filter(a => a.teacher_id == toggleForm.teacher_id);
+        let validAssignment = tAssignments.find(a => a.subject_id == toggleForm.subject_id && a.school_class_id == classId) || tAssignments.find(a => a.school_class_id == classId);
+        
+        if (validAssignment) {
+            localSlots.value.push({
+                id: 'temp-' + Date.now(),
+                day_of_week: dayId,
+                period_id: periodId,
+                teaching_assignment_id: validAssignment.id,
+                teaching_assignment: {
+                    ...validAssignment,
+                    subject: props.subjects.find(s => s.id === validAssignment.subject_id) || validAssignment.subject,
+                    teacher: props.teachers.find(t => t.id === validAssignment.teacher_id) || validAssignment.teacher,
+                    school_class: props.classes.find(c => c.id === validAssignment.school_class_id) || validAssignment.school_class
+                }
+            });
+        }
+    } else {
+        localSlots.value = localSlots.value.filter(s => s.id !== slot.id);
+    }
+    
+    axios.post(route('timetables.slots.toggle'), toggleForm).then(res => {
+        // If the server didn't throw a 500, check if we manually returned an error JSON
+        if (res.data && res.data.type === 'error') {
+            localSlots.value = originalSlots;
+            toastMessage.value = res.data.message;
+            toastType.value = 'error';
+            showToast();
+        } else {
+            router.reload({ only: ['slots', 'classStats', 'teacherWorkloads', 'classAssignmentsDetail', 'flash'], preserveScroll: true, preserveState: true });
+        }
+    }).catch(err => {
+        localSlots.value = originalSlots;
+        toastMessage.value = 'មានបញ្ហាក្នុងការភ្ជាប់ទៅកាន់ Server!';
+        toastType.value = 'error';
+        showToast();
     });
 };
 
@@ -236,7 +310,7 @@ const gridData = computed(() => {
         });
     });
 
-    const slotsArray = Array.isArray(props.slots) ? props.slots : Object.values(props.slots || {});
+    const slotsArray = localSlots.value;
     slotsArray.forEach(slot => {
         if (grid[slot.day_of_week] && grid[slot.day_of_week][slot.period_id]) {
             grid[slot.day_of_week][slot.period_id][slot.teaching_assignment.school_class_id] = slot;
@@ -285,8 +359,8 @@ const teacherStatsGrouped = computed(() => {
     let grouped = {};
     
     tAssignments.forEach(a => {
-        // Count how many slots are using this assignment across ALL shifts
-        const assignedCount = a.assigned_hours || 0;
+        // Count how many slots are using this assignment dynamically from localSlots
+        const assignedCount = localSlots.value.filter(s => s.teaching_assignment_id === a.id).length;
         
         grandTotalAssigned += assignedCount;
         grandTotalRequired += a.weekly_hours;
@@ -347,6 +421,14 @@ const teacherStatsGrouped = computed(() => {
     };
 });
 
+const localClassStats = computed(() => {
+    let stats = JSON.parse(JSON.stringify(props.classStats || {}));
+    for (const classId in stats) {
+        stats[classId].assigned = localSlots.value.filter(s => s.teaching_assignment && s.teaching_assignment.school_class_id == classId).length;
+    }
+    return stats;
+});
+
 const activeParkedSlot = ref(null);
 
 const parkedSlots = computed(() => {
@@ -359,7 +441,7 @@ const parkedSlots = computed(() => {
                 return; // Filter by teacher if selected
             }
             
-            const currentAssigned = a.assigned_hours || 0;
+            const currentAssigned = localSlots.value.filter(s => s.teaching_assignment_id === a.id).length;
             
             if (currentAssigned < a.weekly_hours) {
                 for (let i = 0; i < (a.weekly_hours - currentAssigned); i++) {
@@ -562,11 +644,11 @@ const getCellClass = (slot, dayId, periodId, classId) => {
     
     if (activeParkedSlot.value) {
         if (activeParkedSlot.value.classId === classId && !slot) {
-            const slotsArray = Array.isArray(props.slots) ? props.slots : Object.values(props.slots || {});
+            const slotsArray = localSlots.value;
             const isBusy = slotsArray.some(s => 
                 s.day_of_week === dayId && 
                 s.period_id === periodId && 
-                s.teaching_assignment.teacher_id == activeParkedSlot.value.teacherId
+                s.teaching_assignment && s.teaching_assignment.teacher_id == activeParkedSlot.value.teacherId
             );
             if (isBusy) {
                 baseClass += "bg-gray-200 cursor-not-allowed opacity-60 ";
@@ -768,10 +850,10 @@ const getCellClass = (slot, dayId, periodId, classId) => {
                                 </th>
                                 <th v-for="c in classes" :key="c.id" @click="openClassModal(c)" class="px-2 py-2 print:py-0.5 text-center border min-w-[80px] align-top cursor-pointer hover:bg-gray-100 transition-colors bg-gray-50">
                                     <div class="text-xs font-bold text-gray-800 print:text-[11px]">{{ c.class_code || c.name }}</div>
-                                    <div v-if="props.classStats && props.classStats[c.id] && props.classStats[c.id].required > 0" 
-                                         :class="['text-[10px] px-1.5 py-0.5 rounded inline-block font-medium mt-1 shadow-sm print:shadow-none', (props.classStats[c.id].assigned >= props.classStats[c.id].required ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-orange-100 text-orange-800 border border-orange-200')]"
+                                    <div v-if="localClassStats && localClassStats[c.id] && localClassStats[c.id].required > 0" 
+                                         :class="['text-[10px] px-1.5 py-0.5 rounded inline-block font-medium mt-1 shadow-sm print:shadow-none', (localClassStats[c.id].assigned >= localClassStats[c.id].required ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-orange-100 text-orange-800 border border-orange-200')]"
                                          title="ម៉ោងដែលបានបញ្ចូល / ម៉ោងសរុប">
-                                        {{ props.classStats[c.id].assigned }}/{{ props.classStats[c.id].required }}
+                                        {{ localClassStats[c.id].assigned }}/{{ localClassStats[c.id].required }}
                                     </div>
                                 </th>
                                 <th class="px-2 py-2 print:py-0.5 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider border w-20 sticky print:static right-12 z-20 bg-gray-50 shadow-[-1px_0_0_0_#e5e7eb] print:shadow-none">

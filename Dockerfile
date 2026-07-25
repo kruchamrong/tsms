@@ -35,7 +35,7 @@ RUN npm run build
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Create an entrypoint script to run migrations
-RUN echo '#!/bin/bash\nphp artisan migrate --force\napache2-foreground' > /usr/local/bin/start.sh
+RUN echo '#!/bin/bash\nphp artisan migrate --force\nchmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache\napache2-foreground' > /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
 
 CMD ["/usr/local/bin/start.sh"]

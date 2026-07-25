@@ -42,22 +42,6 @@ const availableClasses = computed(() => {
     return props.classes.filter(c => !takenClassIds.includes(c.id));
 });
 
-const totalHours = computed(() => {
-    if (!form.subject_id || form.school_class_ids.length === 0) return 0;
-
-    let total = 0;
-    form.school_class_ids.forEach(classId => {
-        const cls = props.classes.find(c => c.id === classId);
-        if (cls) {
-            const curriculumId = cls.curriculum_id;
-            const cs = props.curriculumSubjects?.find(c => c.curriculum_id == curriculumId && c.subject_id == form.subject_id);
-            if (cs) {
-                total += cs.weekly_hours;
-            }
-        }
-    });
-    return total;
-});
 
 const totalAssignedHours = computed(() => {
     if (props.selectedTeacherId) {
@@ -328,18 +312,6 @@ const quickAssign = (subjectId) => {
 
 
 
-
-                            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-5 rounded-lg border border-blue-100 mt-2 shadow-sm">
-                                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                                    <div>
-                                        <span class="text-sm font-medium text-blue-800">សរុបម៉ោងបង្រៀន</span>
-                                        <div class="flex items-baseline gap-1 mt-1">
-                                            <span class="text-4xl font-extrabold text-blue-600">{{ totalHours }}</span>
-                                            <span class="text-sm font-semibold text-blue-800">ម៉ោង/សប្ដាហ៍</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
 
                             <button type="submit" :disabled="form.processing" class="w-full bg-blue-600 text-white py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition mt-4">
                                 រក្សាទុកការចាត់តាំង

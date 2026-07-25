@@ -22,7 +22,7 @@ class TimetableService
         $teacherId = $request->query('teacher_id');
         $levelId = $request->query('level_id');
 
-        $classesQuery = SchoolClass::query();
+        $classesQuery = SchoolClass::with('curriculum.subjects');
 
         if ($levelId === 'lower') {
             $classesQuery->whereIn('grade_id', [1, 2, 3]); // Grades 7-9
@@ -56,7 +56,7 @@ class TimetableService
         });
         $slots = $slotsQuery->get();
 
-        $assignmentsQuery = TeachingAssignment::with(['subject', 'schoolClass']);
+        $assignmentsQuery = TeachingAssignment::with(['subject', 'schoolClass', 'teacher']);
         $assignmentsQuery->where(function($q) use ($classIds, $teacherId) {
             $q->whereIn('school_class_id', $classIds);
             if ($teacherId) {
@@ -93,14 +93,8 @@ class TimetableService
             }
         }
 
-        $allClassAssignments = TeachingAssignment::with(['subject', 'teacher', 'schoolClass'])
-            ->whereIn('school_class_id', $classIds)
-            ->get();
-            
-        $allClassSlotsCount = TimetableSlot::whereIn('teaching_assignment_id', $allClassAssignments->pluck('id'))
-            ->selectRaw('teaching_assignment_id, count(*) as count')
-            ->groupBy('teaching_assignment_id')
-            ->pluck('count', 'teaching_assignment_id');
+        $allClassAssignments = $assignments->whereIn('school_class_id', $classIds);
+        $allClassSlotsCount = $assignmentsSlotsCount;
 
         $classStats = [];
         $classAssignmentsDetail = [];
